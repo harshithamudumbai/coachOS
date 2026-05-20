@@ -73,6 +73,10 @@ app.use('/api/auth', authRoutes);
 const clientRoutes = require('./routes/clients');
 app.use('/api/clients', clientRoutes);
 
+// Dashboard routes (stats, activity feed)
+const dashboardRoutes = require('./routes/dashboard');
+app.use('/api/dashboard', dashboardRoutes);
+
 // ============================================
 // ERROR HANDLING
 // ============================================

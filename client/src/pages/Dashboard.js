@@ -1,26 +1,56 @@
+// ============================================
+// pages/Dashboard.js — Enhanced Coach Dashboard
+// ============================================
+// 📚 LEARNING NOTES:
+//
+// What changed from Phase 1?
+// → Phase 1: fetched /clients and counted manually
+// → Phase 2: fetches /dashboard/stats — SQL does the counting (faster!)
+//
+// Why is server-side counting better?
+// → Phase 1: GET /clients returns ALL clients → count in JS
+//   - Slow if you have 1,000+ clients (downloads all data)
+// → Phase 2: GET /dashboard/stats → SQL COUNT(*) on server
+//   - Fast! SQL is optimized for counting
+//   - Returns just the numbers, not all the data
+//
+// What is Promise.all?
+// → Runs multiple async calls in PARALLEL (at the same time)
+// → Without it: fetch stats → wait → fetch activity → wait (slow)
+// → With it: fetch stats + activity at the same time (fast!)
+// ============================================
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
   const { coach, authFetch } = useAuth();
-  const [stats, setStats] = useState({ totalClients: 0, activeClients: 0, recentClients: [] });
+  const [stats, setStats] = useState(null);
+  const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchDashboardData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchDashboardData = async () => {
     try {
-      const res = await authFetch('/clients?limit=5');
-      if (res.ok) {
-        const data = await res.json();
-        setStats({
-          totalClients: data.pagination.total,
-          activeClients: data.clients.filter(c => c.status === 'active').length,
-          recentClients: data.clients
-        });
+      // 📚 Promise.all — fetch both endpoints at the same time!
+      const [statsRes, activityRes] = await Promise.all([
+        authFetch('/dashboard/stats'),
+        authFetch('/dashboard/activity?limit=10')
+      ]);
+
+      if (statsRes.ok) {
+        const statsData = await statsRes.json();
+        setStats(statsData);
+      }
+
+      if (activityRes.ok) {
+        const activityData = await activityRes.json();
+        setActivities(activityData.activities || []);
       }
     } catch (error) {
       console.error('Dashboard fetch error:', error);
@@ -36,43 +66,142 @@ export default function Dashboard() {
     return 'Good evening';
   };
 
-  const getInitials = (name) => {
-    if (!name) return '?';
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+  // 📚 Activity feed helpers
+  const activityIcons = {
+    client_added: '👤',
+    progress_logged: '📊',
+    note_added: '📝'
+  };
+
+  const activityColors = {
+    client_added: 'var(--primary)',
+    progress_logged: 'var(--success)',
+    note_added: 'var(--info)'
+  };
+
+  const timeAgo = (dateStr) => {
+    const now = new Date();
+    const date = new Date(dateStr);
+    const diffMs = now - date;
+    const diffMin = Math.floor(diffMs / 60000);
+    const diffHr = Math.floor(diffMs / 3600000);
+    const diffDay = Math.floor(diffMs / 86400000);
+
+    if (diffMin < 1) return 'just now';
+    if (diffMin < 60) return `${diffMin}m ago`;
+    if (diffHr < 24) return `${diffHr}h ago`;
+    if (diffDay < 7) return `${diffDay}d ago`;
+    return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
   };
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '60px 0' }}><p className="text-muted">Loading...</p></div>;
+    return (
+      <div className="detail-loading">
+        <div className="loading-spinner"></div>
+        <p>Loading dashboard...</p>
+      </div>
+    );
   }
+
+  const clientStats = stats?.clients || { total: 0, active: 0, inactive: 0, paused: 0 };
+  const trends = stats?.trends || { clientsThisWeek: 0, clientsThisMonth: 0 };
 
   return (
     <div>
+      {/* Welcome Header */}
       <div className="topbar">
         <div className="topbar-left">
           <h1>{getGreeting()}, {coach?.full_name?.split(' ')[0]} 👋</h1>
-          <p>Here's what's happening with your practice today.</p>
+          <p>
+            {coach?.business_name
+              ? `Here's what's happening at ${coach.business_name} today.`
+              : "Here's what's happening with your practice today."}
+          </p>
+        </div>
+        <div className="topbar-right">
+          <Link to="/clients" className="btn btn-primary btn-sm">➕ Add Client</Link>
         </div>
       </div>
 
+      {/* Stat Cards */}
       <div className="stats-grid">
         <div className="stat-card">
           <div className="stat-icon purple">👥</div>
-          <div className="stat-info"><h3>{stats.totalClients}</h3><p>Total Clients</p></div>
+          <div className="stat-info">
+            <h3>{clientStats.total}</h3>
+            <p>Total Clients</p>
+            {trends.clientsThisMonth > 0 && (
+              <span className="stat-change positive">+{trends.clientsThisMonth} this month</span>
+            )}
+          </div>
         </div>
         <div className="stat-card">
           <div className="stat-icon green">✅</div>
-          <div className="stat-info"><h3>{stats.activeClients}</h3><p>Active Clients</p></div>
+          <div className="stat-info">
+            <h3>{clientStats.active}</h3>
+            <p>Active Clients</p>
+          </div>
         </div>
         <div className="stat-card">
           <div className="stat-icon blue">📅</div>
-          <div className="stat-info"><h3>0</h3><p>Sessions Today</p></div>
+          <div className="stat-info">
+            <h3>{trends.clientsThisWeek}</h3>
+            <p>New This Week</p>
+          </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon orange">💰</div>
-          <div className="stat-info"><h3>₹0</h3><p>Revenue (MTD)</p></div>
+          <div className="stat-icon orange">⏸️</div>
+          <div className="stat-info">
+            <h3>{clientStats.paused + clientStats.inactive}</h3>
+            <p>Inactive / Paused</p>
+          </div>
         </div>
       </div>
 
+      {/* Client Distribution Bar */}
+      {clientStats.total > 0 && (
+        <div className="card" style={{ marginBottom: 'var(--space-xl)' }}>
+          <div className="card-header">
+            <h3 className="card-title">Client Distribution</h3>
+          </div>
+          <div className="distribution-bar">
+            {clientStats.active > 0 && (
+              <div
+                className="distribution-segment active"
+                style={{ width: `${(clientStats.active / clientStats.total) * 100}%` }}
+                title={`Active: ${clientStats.active}`}
+              >
+                {clientStats.active > 0 && clientStats.active}
+              </div>
+            )}
+            {clientStats.paused > 0 && (
+              <div
+                className="distribution-segment paused"
+                style={{ width: `${(clientStats.paused / clientStats.total) * 100}%` }}
+                title={`Paused: ${clientStats.paused}`}
+              >
+                {clientStats.paused}
+              </div>
+            )}
+            {clientStats.inactive > 0 && (
+              <div
+                className="distribution-segment inactive"
+                style={{ width: `${(clientStats.inactive / clientStats.total) * 100}%` }}
+                title={`Inactive: ${clientStats.inactive}`}
+              >
+                {clientStats.inactive}
+              </div>
+            )}
+          </div>
+          <div className="distribution-legend">
+            <span className="legend-item"><span className="legend-dot active"></span> Active</span>
+            <span className="legend-item"><span className="legend-dot paused"></span> Paused</span>
+            <span className="legend-item"><span className="legend-dot inactive"></span> Inactive</span>
+          </div>
+        </div>
+      )}
+
+      {/* Quick Actions */}
       <div className="card" style={{ marginBottom: 'var(--space-xl)' }}>
         <div className="card-header"><h3 className="card-title">Quick Actions</h3></div>
         <div style={{ display: 'flex', gap: 'var(--space-md)', flexWrap: 'wrap' }}>
@@ -82,40 +211,39 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Activity Feed */}
       <div className="card">
         <div className="card-header">
-          <h3 className="card-title">Recent Clients</h3>
-          <Link to="/clients" className="btn btn-ghost btn-sm">View all →</Link>
+          <h3 className="card-title">Recent Activity</h3>
         </div>
-        {stats.recentClients.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-icon">👥</div>
-            <h3>No clients yet</h3>
-            <p>Add your first client to get started.</p>
-            <Link to="/clients" className="btn btn-primary">➕ Add First Client</Link>
+        {activities.length === 0 ? (
+          <div className="empty-state" style={{ padding: 'var(--space-xl)' }}>
+            <div className="empty-icon">📋</div>
+            <h3>No activity yet</h3>
+            <p>Activity will appear here as you add clients, log progress, and write notes.</p>
           </div>
         ) : (
-          <table className="client-table">
-            <thead><tr><th>Client</th><th>Goals</th><th>Status</th><th>Joined</th></tr></thead>
-            <tbody>
-              {stats.recentClients.map(client => (
-                <tr key={client.id}>
-                  <td>
-                    <div className="client-name-cell">
-                      <div className="client-avatar">{getInitials(client.full_name)}</div>
-                      <div>
-                        <div style={{ fontWeight: 600 }}>{client.full_name}</div>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{client.email}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{client.goals || '—'}</td>
-                  <td><span className={`status-badge ${client.status}`}>{client.status}</span></td>
-                  <td style={{ color: 'var(--text-secondary)' }}>{new Date(client.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="activity-feed">
+            {activities.map((activity, idx) => (
+              <div key={`${activity.type}-${activity.id}-${idx}`} className="activity-item">
+                <div className="activity-icon" style={{ color: activityColors[activity.type] }}>
+                  {activityIcons[activity.type] || '📌'}
+                </div>
+                <div className="activity-body">
+                  <p className="activity-description">
+                    {activity.client_id ? (
+                      <Link to={`/clients/${activity.client_id}`} className="activity-link">
+                        {activity.description}
+                      </Link>
+                    ) : (
+                      activity.description
+                    )}
+                  </p>
+                  <span className="activity-time">{timeAgo(activity.created_at)}</span>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>

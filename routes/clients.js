@@ -317,4 +317,93 @@ router.post('/:id/notes', async (req, res) => {
   }
 });
 
+// ============================================
+// GET /api/clients/:id/progress — Get all progress entries
+// ============================================
+// 📚 LEARNING NOTES:
+// → This returns progress entries sorted by date (newest first)
+// → We verify the client belongs to this coach before returning data
+router.get('/:id/progress', async (req, res) => {
+  try {
+    // Verify client belongs to this coach
+    const [existing] = await db.query(
+      'SELECT id FROM clients WHERE id = ? AND coach_id = ?',
+      [req.params.id, req.coach.id]
+    );
+
+    if (existing.length === 0) {
+      return res.status(404).json({ error: 'Client not found' });
+    }
+
+    const [entries] = await db.query(
+      `SELECT * FROM progress_entries 
+       WHERE client_id = ? 
+       ORDER BY recorded_date DESC`,
+      [req.params.id]
+    );
+
+    res.json({ entries });
+
+  } catch (error) {
+    console.error('Fetch progress error:', error);
+    res.status(500).json({ error: 'Failed to fetch progress entries' });
+  }
+});
+
+// ============================================
+// GET /api/clients/:id/notes — Get all coach notes for a client
+// ============================================
+router.get('/:id/notes', async (req, res) => {
+  try {
+    // Verify client belongs to this coach
+    const [existing] = await db.query(
+      'SELECT id FROM clients WHERE id = ? AND coach_id = ?',
+      [req.params.id, req.coach.id]
+    );
+
+    if (existing.length === 0) {
+      return res.status(404).json({ error: 'Client not found' });
+    }
+
+    const [notes] = await db.query(
+      `SELECT * FROM coach_notes 
+       WHERE client_id = ? AND coach_id = ?
+       ORDER BY created_at DESC`,
+      [req.params.id, req.coach.id]
+    );
+
+    res.json({ notes });
+
+  } catch (error) {
+    console.error('Fetch notes error:', error);
+    res.status(500).json({ error: 'Failed to fetch notes' });
+  }
+});
+
+// ============================================
+// DELETE /api/clients/:id/notes/:noteId — Delete a coach note
+// ============================================
+// 📚 LEARNING NOTES:
+// → Two params: :id (client) and :noteId (note)
+// → We check BOTH client ownership AND note ownership
+// → This is "defense in depth" — multiple layers of security
+router.delete('/:id/notes/:noteId', async (req, res) => {
+  try {
+    const [result] = await db.query(
+      'DELETE FROM coach_notes WHERE id = ? AND client_id = ? AND coach_id = ?',
+      [req.params.noteId, req.params.id, req.coach.id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Note not found' });
+    }
+
+    res.json({ message: 'Note deleted' });
+
+  } catch (error) {
+    console.error('Delete note error:', error);
+    res.status(500).json({ error: 'Failed to delete note' });
+  }
+});
+
 module.exports = router;

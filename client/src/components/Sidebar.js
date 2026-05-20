@@ -11,15 +11,16 @@
 // → React Router hook that lets you programmatically navigate
 // → navigate('/clients') → goes to clients page
 //
-// Component composition:
-// → Sidebar is a "layout component" — it wraps around page content
-// → It doesn't change when you navigate between pages
+// Phase 2 additions:
+// → isOpen prop controls mobile visibility
+// → onClose prop lets parent close the sidebar
+// → CSS class "open" slides the sidebar in on mobile
 // ============================================
 
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-export default function Sidebar({ onThemeToggle, theme }) {
+export default function Sidebar({ onThemeToggle, theme, isOpen, onClose }) {
   const { coach, logout } = useAuth();
 
   // Get initials for avatar (e.g., "Harshitha M" → "HM")
@@ -29,7 +30,7 @@ export default function Sidebar({ onThemeToggle, theme }) {
   };
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
       {/* Logo */}
       <div className="sidebar-header">
         <span style={{ fontSize: '1.5rem' }}>🧑‍⚕️</span>

@@ -14,13 +14,13 @@
 // → <Route>         = maps a URL path to a component
 // → <Navigate>      = redirects to another path
 //
-// Layout pattern:
-// → Some pages have a sidebar (dashboard, clients)
-// → Some pages don't (login, signup)
-// → We use different layouts for each
+// Phase 2 additions:
+// → /clients/:id route — dynamic route with URL parameter
+// → Mobile sidebar toggle with hamburger button
+// → Sidebar closes on navigation for mobile
 // ============================================
 
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { useState, useEffect } from 'react';
 
@@ -33,16 +33,24 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import Clients from './pages/Clients';
+import ClientDetail from './pages/ClientDetail';
 import Settings from './pages/Settings';
 
 // Layout for authenticated pages (with sidebar)
 function AppLayout() {
   const [theme, setTheme] = useState(localStorage.getItem('coachos_theme') || 'light');
+  const [sidebarOpen, setSidebarOpen] = useState(false);  // 📚 Mobile sidebar state
+  const location = useLocation();  // 📚 Track current URL
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('coachos_theme', theme);
   }, [theme]);
+
+  // 📚 Close sidebar when navigating (mobile only)
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
@@ -50,11 +58,31 @@ function AppLayout() {
 
   return (
     <div className="app-layout">
-      <Sidebar onThemeToggle={toggleTheme} theme={theme} />
+      {/* Mobile hamburger button */}
+      <button
+        className="mobile-menu-btn"
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        aria-label="Toggle menu"
+      >
+        {sidebarOpen ? '✕' : '☰'}
+      </button>
+
+      {/* Sidebar overlay for mobile */}
+      {sidebarOpen && (
+        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
+      )}
+
+      <Sidebar
+        onThemeToggle={toggleTheme}
+        theme={theme}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
       <main className="main-content">
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/clients" element={<Clients />} />
+          <Route path="/clients/:id" element={<ClientDetail />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
       </main>

@@ -948,39 +948,8 @@ textarea.form-input {
   margin-right: auto;
 }
 
-/* ============================================
-   15. RESPONSIVE
-   ============================================ */
-@media (max-width: 768px) {
-  .sidebar {
-    transform: translateX(-100%);
-  }
+/* Phase 1 responsive rules moved to Phase 2 section below (section 26) */
 
-  .sidebar.open {
-    transform: translateX(0);
-  }
-
-  .main-content {
-    margin-left: 0;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .auth-card {
-    padding: var(--space-lg);
-  }
-
-  .client-list-header {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .search-box {
-    width: 100%;
-  }
-}
 
 /* ============================================
    16. UTILITY CLASSES
@@ -997,3 +966,459 @@ textarea.form-input {
 .mt-md { margin-top: var(--space-md); }
 .mb-md { margin-bottom: var(--space-md); }
 .font-bold { font-weight: 700; }
+
+/* ============================================
+   17. BREADCRUMB — Phase 2
+   ============================================ */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+  font-size: 0.85rem;
+}
+.breadcrumb-link {
+  color: var(--text-muted);
+  transition: color var(--transition-fast);
+}
+.breadcrumb-link:hover { color: var(--primary); }
+.breadcrumb-separator { color: var(--text-muted); }
+.breadcrumb-current { color: var(--text-primary); font-weight: 600; }
+
+/* ============================================
+   18. CLIENT DETAIL HEADER — Phase 2
+   ============================================ */
+.client-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+.client-detail-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+.client-detail-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 800;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+}
+.client-detail-info h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 2px;
+}
+.client-detail-meta {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+.client-detail-badges {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+  flex-wrap: wrap;
+}
+.detail-badge {
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  text-transform: capitalize;
+}
+
+/* ============================================
+   19. TABS — Phase 2
+   ============================================ */
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: var(--space-xl);
+}
+.tab {
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  font-family: var(--font-family);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+.tab:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+.tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+/* ============================================
+   20. PROFILE TAB — Phase 2
+   ============================================ */
+.profile-form-grid, .profile-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+.profile-form-grid .full-width,
+.profile-details-grid .full-width {
+  grid-column: 1 / -1;
+}
+.profile-field {
+  padding: var(--space-md);
+  background: var(--bg-input);
+  border-radius: var(--radius-md);
+}
+.field-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: var(--space-xs);
+}
+.field-value {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+/* ============================================
+   21. PROGRESS TAB — Phase 2
+   ============================================ */
+.tab-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-lg);
+}
+.tab-section-header h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.add-entry-card {
+  margin-bottom: var(--space-lg);
+  border: 2px dashed var(--primary-light);
+  background: rgba(108, 92, 231, 0.03);
+}
+.progress-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
+}
+.progress-form-grid .full-width {
+  grid-column: 1 / -1;
+}
+.progress-entries {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+.progress-entry-card {
+  transition: transform var(--transition-fast);
+}
+.progress-entry-card:hover {
+  transform: translateX(4px);
+}
+.entry-date {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+}
+.entry-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+}
+.metric {
+  min-width: 80px;
+}
+.metric-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+.metric-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.metric-bar {
+  width: 80px;
+  height: 4px;
+  background: var(--bg-input);
+  border-radius: var(--radius-full);
+  margin-top: 4px;
+  overflow: hidden;
+}
+.metric-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width var(--transition-normal);
+}
+.metric-bar-fill.energy {
+  background: linear-gradient(90deg, var(--warning), var(--success));
+}
+.entry-notes {
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ============================================
+   22. NOTES TAB — Phase 2
+   ============================================ */
+.add-note-card {
+  margin-bottom: var(--space-lg);
+}
+.notes-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+.note-card {
+  border-left: 3px solid var(--primary-light);
+  transition: border-color var(--transition-fast);
+}
+.note-card:hover {
+  border-left-color: var(--primary);
+}
+.note-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+}
+.note-time {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.note-content {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+}
+
+/* ============================================
+   23. ACTIVITY FEED — Phase 2
+   ============================================ */
+.activity-feed {
+  display: flex;
+  flex-direction: column;
+}
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--border);
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.activity-body { flex: 1; min-width: 0; }
+.activity-description {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+.activity-link {
+  color: var(--text-primary);
+  transition: color var(--transition-fast);
+}
+.activity-link:hover { color: var(--primary); }
+.activity-time {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  display: block;
+}
+
+/* ============================================
+   24. DISTRIBUTION BAR — Phase 2
+   ============================================ */
+.distribution-bar {
+  display: flex;
+  height: 32px;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: var(--space-md);
+  background: var(--bg-input);
+}
+.distribution-segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+  min-width: 24px;
+  transition: width var(--transition-normal);
+}
+.distribution-segment.active { background: var(--success); }
+.distribution-segment.paused { background: var(--warning); color: #333; }
+.distribution-segment.inactive { background: var(--text-muted); }
+.distribution-legend {
+  display: flex;
+  gap: var(--space-lg);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.legend-dot.active { background: var(--success); }
+.legend-dot.paused { background: var(--warning); }
+.legend-dot.inactive { background: var(--text-muted); }
+
+/* ============================================
+   25. FILTER & LOADING — Phase 2
+   ============================================ */
+.client-filters {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+.filter-select {
+  padding: 8px 14px;
+  background: var(--bg-input);
+  border: 2px solid transparent;
+  border-radius: var(--radius-full);
+  font-family: var(--font-family);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  outline: none;
+  transition: all var(--transition-fast);
+}
+.filter-select:focus { border-color: var(--primary); }
+.clickable-row { cursor: pointer; }
+.clickable-row:hover { background: var(--bg-hover); }
+
+.detail-loading, .detail-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3xl);
+  text-align: center;
+  gap: var(--space-md);
+}
+.loading-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+/* ============================================
+   26. MOBILE HAMBURGER — Phase 2
+   ============================================ */
+.mobile-menu-btn {
+  display: none;
+  position: fixed;
+  top: var(--space-md);
+  left: var(--space-md);
+  z-index: 200;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  font-size: 1.4rem;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+}
+.mobile-menu-btn:hover { background: var(--bg-hover); }
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(2px);
+  z-index: 90;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-btn { display: flex; }
+  .sidebar-overlay { display: block; }
+
+  .sidebar {
+    transform: translateX(-100%);
+    z-index: 100;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: var(--space-lg);
+    padding-top: 70px;
+  }
+
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .profile-form-grid, .profile-details-grid { grid-template-columns: 1fr; }
+  .progress-form-grid { grid-template-columns: 1fr 1fr; }
+  .tabs { overflow-x: auto; }
+  .tab { white-space: nowrap; padding: 10px 14px; font-size: 0.85rem; }
+  .client-detail-info { gap: var(--space-md); }
+  .client-detail-avatar { width: 48px; height: 48px; font-size: 1rem; }
+  .client-detail-info h1 { font-size: 1.2rem; }
+  .entry-metrics { gap: var(--space-md); }
+
+  .client-list-header { flex-direction: column; align-items: stretch; }
+  .search-box { width: 100%; }
+  .client-filters { justify-content: space-between; }
+  .auth-card { padding: var(--space-lg); }
+}
+
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr; }
+  .progress-form-grid { grid-template-columns: 1fr; }
+}
