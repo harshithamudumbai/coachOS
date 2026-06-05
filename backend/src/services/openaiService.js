@@ -1,8 +1,10 @@
 const Groq = require('groq-sdk');
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-
 async function analyzeWithAI({ query, schema, explainOutput, parsedExplain }) {
+  if (!process.env.GROQ_API_KEY) {
+    throw new Error("GROQ_API_KEY is not configured in .env");
+  }
+  const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
   const systemPrompt = `You are simultaneously:
 1. Principal Database Architect (15 years MySQL experience)
 2. Senior MySQL Performance Engineer
@@ -16,11 +18,11 @@ You analyze SQL queries and return ONLY valid JSON. No markdown, no backticks, n
 QUERY:
 ${query}
 
-${schema ? \`SCHEMA:\\n\${schema}\` : 'No schema provided.'}
+${schema ? `SCHEMA:\n${schema}` : 'No schema provided.'}
 
-${explainOutput ? \`EXPLAIN OUTPUT:\\n\${JSON.stringify(explainOutput, null, 2)}\` : 'EXPLAIN not available (analyze from query structure).'}
+${explainOutput ? `EXPLAIN OUTPUT:\n${JSON.stringify(explainOutput, null, 2)}` : 'EXPLAIN not available (analyze from query structure).'}
 
-${parsedExplain ? \`PARSED STATS:\\n\${JSON.stringify(parsedExplain, null, 2)}\` : ''}
+${parsedExplain ? `PARSED STATS:\n${JSON.stringify(parsedExplain, null, 2)}` : ''}
 
 Return this exact JSON structure (no extra keys, no markdown):
 {
@@ -77,7 +79,7 @@ Return this exact JSON structure (no extra keys, no markdown):
     });
 
     const raw = response.choices[0].message.content.trim();
-    const cleaned = raw.replace(/^```json\\n?/, '').replace(/```$/, '').trim();
+    const cleaned = raw.replace(/^```json\n?/, '').replace(/```$/, '').trim();
     return JSON.parse(cleaned);
   } catch (error) {
     console.error("Groq API error:", error);

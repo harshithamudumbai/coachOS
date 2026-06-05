@@ -5,13 +5,30 @@ import ResultsDashboard from '../components/results/ResultsDashboard';
 import { useAnalyze } from '../hooks/useAnalyze';
 import { Loader2, AlertCircle } from 'lucide-react';
 
-export default function Analyzer() {
-  const [query, setQuery] = useState('');
+const OPTIMIZATION_QUOTES = [
+  '"Premature optimization is the root of all evil." — Donald Knuth',
+  '"Make it work, make it right, make it fast." — Kent Beck',
+  '"The best performance improvement is the transition from the nonworking state to the working state." — J. Osterhout',
+  '"Hardware is cheap, programmers are expensive." — Unknown',
+  '"There are two hard things in CS: cache invalidation, naming things, and off-by-one errors." — Phil Karlton',
+  '"Sometimes it pays to stay in bed on Monday, rather than spending the rest of the week debugging Monday\'s code." — Dan Salomon'
+];
+
+export default function Analyzer({ initialQuery = '' }) {
+  const [query, setQuery] = useState(initialQuery);
   const [schema, setSchema] = useState('');
+  const [loadingQuote, setLoadingQuote] = useState('');
   const { analyze, data, isLoading, error } = useAnalyze();
+
+  React.useEffect(() => {
+    if (initialQuery) {
+      setQuery(initialQuery);
+    }
+  }, [initialQuery]);
 
   const handleAnalyze = () => {
     if (!query.trim()) return;
+    setLoadingQuote(OPTIMIZATION_QUOTES[Math.floor(Math.random() * OPTIMIZATION_QUOTES.length)]);
     analyze(query, schema);
   };
 
@@ -73,8 +90,11 @@ export default function Analyzer() {
           {isLoading && (
             <div className="h-full min-h-[400px] glass-panel rounded-2xl flex flex-col items-center justify-center text-center p-8">
               <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
-              <h3 className="font-semibold text-foreground animate-pulse">Running EXPLAIN & AI Analysis</h3>
-              <p className="text-sm text-muted-foreground mt-2">This usually takes 3-5 seconds...</p>
+              <h3 className="font-semibold text-foreground animate-pulse mb-2">Running EXPLAIN & AI Analysis</h3>
+              <p className="text-sm text-primary/80 font-mono italic max-w-md mx-auto mt-4 mb-2">
+                {loadingQuote}
+              </p>
+              <p className="text-xs text-muted-foreground mt-4">This usually takes 3-5 seconds...</p>
             </div>
           )}
 

@@ -38,10 +38,10 @@ export default function Landing({ onNavigate }) {
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
             <button 
-              onClick={() => onNavigate('history')}
+              onClick={() => onNavigate('analyzer', 'SELECT users.id, users.email, orders.total FROM users JOIN orders ON users.id = orders.user_id WHERE orders.total > 1000 ORDER BY orders.created_at DESC;')}
               className="px-8 py-4 bg-muted hover:bg-muted/80 text-foreground font-medium rounded-lg border border-border transition-colors"
             >
-              View Sample Analysis
+              Try Sample Query
             </button>
           </div>
         </motion.div>

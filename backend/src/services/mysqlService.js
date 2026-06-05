@@ -16,7 +16,15 @@ async function runExplain(query) {
     console.warn('EXPLAIN failed:', err.message);
     return null;
   } finally {
-    if (conn) conn.release();
+    if (conn) {
+      try {
+        // Reset the connection state before returning it to the pool
+        await conn.execute("SET SESSION TRANSACTION READ WRITE");
+      } catch (e) {
+        console.warn("Failed to reset transaction state:", e.message);
+      }
+      conn.release();
+    }
   }
 }
 

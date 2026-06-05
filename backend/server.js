@@ -1,4 +1,5 @@
-require('dotenv').config({ path: '../.env' }); // Load from parent dir to reuse existing .env
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env'), override: true });
 const app = require('./src/app');
 const { testConnection } = require('./src/db/connection');
 
