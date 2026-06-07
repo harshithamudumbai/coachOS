@@ -1,10 +1,10 @@
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-export async function analyzeQuery({ query, schema }) {
+export async function analyzeQuery({ query, schema, indexes, pastedExplain }) {
   const res = await fetch(`${API_BASE}/analyze`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, schema })
+    body: JSON.stringify({ query, schema, indexes, pastedExplain })
   });
   
   if (!res.ok) {

@@ -1,6 +1,6 @@
 const Groq = require('groq-sdk');
 
-async function analyzeWithAI({ query, schema, explainOutput, parsedExplain }) {
+async function analyzeWithAI({ query, schema, indexes, explainOutput, parsedExplain }) {
   if (!process.env.GROQ_API_KEY) {
     throw new Error("GROQ_API_KEY is not configured in .env");
   }
@@ -20,7 +20,9 @@ ${query}
 
 ${schema ? `SCHEMA:\n${schema}` : 'No schema provided.'}
 
-${explainOutput ? `EXPLAIN OUTPUT:\n${JSON.stringify(explainOutput, null, 2)}` : 'EXPLAIN not available (analyze from query structure).'}
+${indexes ? `INDEXES:\n${indexes}` : 'No indexes provided.'}
+
+${explainOutput ? `EXPLAIN OUTPUT:\n${typeof explainOutput === 'string' ? explainOutput : JSON.stringify(explainOutput, null, 2)}` : 'EXPLAIN not available (analyze from query structure).'}
 
 ${parsedExplain ? `PARSED STATS:\n${JSON.stringify(parsedExplain, null, 2)}` : ''}
 

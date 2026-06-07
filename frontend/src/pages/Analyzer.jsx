@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import QueryInput from '../components/analyzer/QueryInput';
 import SchemaInput from '../components/analyzer/SchemaInput';
+import ExplainInput from '../components/analyzer/ExplainInput';
+import IndexesInput from '../components/analyzer/IndexesInput';
 import ResultsDashboard from '../components/results/ResultsDashboard';
 import { useAnalyze } from '../hooks/useAnalyze';
 import { Loader2, AlertCircle } from 'lucide-react';
@@ -17,6 +19,8 @@ const OPTIMIZATION_QUOTES = [
 export default function Analyzer({ initialQuery = '' }) {
   const [query, setQuery] = useState(initialQuery);
   const [schema, setSchema] = useState('');
+  const [indexes, setIndexes] = useState('');
+  const [pastedExplain, setPastedExplain] = useState('');
   const [loadingQuote, setLoadingQuote] = useState('');
   const { analyze, data, isLoading, error } = useAnalyze();
 
@@ -29,7 +33,7 @@ export default function Analyzer({ initialQuery = '' }) {
   const handleAnalyze = () => {
     if (!query.trim()) return;
     setLoadingQuote(OPTIMIZATION_QUOTES[Math.floor(Math.random() * OPTIMIZATION_QUOTES.length)]);
-    analyze(query, schema);
+    analyze(query, schema, indexes, pastedExplain);
   };
 
   return (
@@ -46,6 +50,11 @@ export default function Analyzer({ initialQuery = '' }) {
 
             <QueryInput value={query} onChange={setQuery} />
             <SchemaInput value={schema} onChange={setSchema} />
+            
+            <div className="flex flex-col gap-3">
+              <IndexesInput value={indexes} onChange={setIndexes} />
+              <ExplainInput value={pastedExplain} onChange={setPastedExplain} />
+            </div>
 
             {error && (
               <div className="p-4 bg-destructive/10 border border-destructive/20 text-destructive rounded-lg flex gap-3 text-sm">

@@ -7,14 +7,22 @@ const { pool } = require('../db/connection');
 
 async function analyze(req, res, next) {
   try {
-    const { query, schema } = req.body;
+    const { query, schema, indexes, pastedExplain } = req.body;
 
-    // Run EXPLAIN
-    const explainOutput = await runExplain(query);
-    const parsedExplain = parseExplainOutput(explainOutput);
+    // Run EXPLAIN if not pasted
+    let explainOutput = null;
+    let parsedExplain = null;
+    
+    if (pastedExplain) {
+      // Use the pasted EXPLAIN string directly
+      explainOutput = pastedExplain;
+    } else {
+      explainOutput = await runExplain(query);
+      parsedExplain = parseExplainOutput(explainOutput);
+    }
 
     // AI analysis
-    const analysis = await analyzeWithAI({ query, schema, explainOutput, parsedExplain });
+    const analysis = await analyzeWithAI({ query, schema, indexes, explainOutput, parsedExplain });
 
     // Save to history (hash IP for basic privacy)
     const ipHash = crypto
@@ -24,9 +32,9 @@ async function analyze(req, res, next) {
 
     const id = uuidv4();
     await pool.execute(
-      `INSERT INTO analysis_history (id, query_text, schema_text, health_score, analysis_json, ip_hash)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [id, query, schema || null, analysis.health_score, JSON.stringify(analysis), ipHash]
+      `INSERT INTO analysis_history (id, query_text, schema_text, indexes_text, pasted_explain_text, health_score, analysis_json, ip_hash)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [id, query, schema || null, indexes || null, pastedExplain || null, analysis.health_score, JSON.stringify(analysis), ipHash]
     );
 
     res.json({ id, ...analysis });

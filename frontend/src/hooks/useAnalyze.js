@@ -6,13 +6,13 @@ export function useAnalyze() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const analyze = async (query, schema) => {
+  const analyze = async (query, schema, indexes, pastedExplain) => {
     setIsLoading(true);
     setError(null);
     setData(null);
     
     try {
-      const result = await analyzeQuery({ query, schema });
+      const result = await analyzeQuery({ query, schema, indexes, pastedExplain });
       setData(result);
     } catch (err) {
       setError(err.message);
