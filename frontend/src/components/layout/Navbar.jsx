@@ -3,57 +3,50 @@ import { Database, BarChart3, History, ChevronDown } from 'lucide-react';
 
 export default function Navbar({ currentPage, onNavigate }) {
   return (
-    <nav className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+    <nav className="border-b-4 border-slate-800 bg-white/90 backdrop-blur sticky top-0 z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         
         {/* Logo */}
         <div 
-          className="flex items-center gap-2 cursor-pointer"
+          className="flex items-center gap-2 cursor-pointer transform -rotate-2 hover:rotate-0 transition-transform"
           onClick={() => onNavigate('home')}
         >
-          <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-            <Database className="w-5 h-5 text-primary" />
+          <div className="w-10 h-10 rounded-full border-2 border-slate-800 bg-yellow-200 flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(30,41,59,1)]">
+            <span className="font-bold text-2xl font-mono text-slate-800">∑</span>
           </div>
-          <span className="font-bold text-xl tracking-tight">Dr.Query</span>
+          <span className="font-bold text-3xl tracking-tight handwritten text-slate-800 underline decoration-wavy decoration-blue-500">Dr.Query</span>
         </div>
 
         {/* Center Links */}
-        <div className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
+        <div className="hidden md:flex items-center gap-6 text-xl handwritten font-bold text-slate-600">
           <button 
             onClick={() => onNavigate('home')}
-            className={`hover:text-foreground transition-colors ${currentPage === 'home' ? 'text-foreground' : ''}`}
+            className={`hover:text-blue-600 hover:-translate-y-0.5 transition-all ${currentPage === 'home' ? 'text-blue-600 underline decoration-4 decoration-yellow-400' : ''}`}
           >
             Home
           </button>
           <button 
             onClick={() => onNavigate('analyzer')}
-            className={`flex items-center gap-2 hover:text-foreground transition-colors ${currentPage === 'analyzer' ? 'text-foreground' : ''}`}
+            className={`flex items-center gap-1 hover:text-blue-600 hover:-translate-y-0.5 transition-all ${currentPage === 'analyzer' ? 'text-blue-600 underline decoration-4 decoration-yellow-400' : ''}`}
           >
-            <BarChart3 className="w-4 h-4" />
+            <BarChart3 className="w-5 h-5" />
             Analyzer
           </button>
           <button 
             onClick={() => onNavigate('history')}
-            className={`flex items-center gap-2 hover:text-foreground transition-colors ${currentPage === 'history' ? 'text-foreground' : ''}`}
+            className={`flex items-center gap-1 hover:text-blue-600 hover:-translate-y-0.5 transition-all ${currentPage === 'history' ? 'text-blue-600 underline decoration-4 decoration-yellow-400' : ''}`}
           >
-            <History className="w-4 h-4" />
-            History
+            <History className="w-5 h-5" />
+            Notes History
           </button>
-          <span className="cursor-not-allowed opacity-50">Documentation</span>
-          <span className="cursor-not-allowed opacity-50">Pricing</span>
         </div>
 
         {/* Right Badge */}
         <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-success/10 border border-success/20 text-success text-xs font-semibold">
-            <div className="w-2 h-2 rounded-full bg-success animate-pulse"></div>
-            MySQL Ready
+          <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-white border-2 border-slate-800 text-slate-800 text-xs font-bold font-mono shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] transform rotate-2">
+            <div className="w-3 h-3 border-2 border-slate-800 rounded-full bg-green-400"></div>
+            MySQL=Ready
           </div>
-          
-          <button className="flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md border border-border bg-muted/50 cursor-not-allowed opacity-70">
-            PostgreSQL
-            <span className="bg-background px-1.5 py-0.5 rounded text-[10px] ml-1">Soon</span>
-          </button>
         </div>
 
       </div>
