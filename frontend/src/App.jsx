@@ -3,6 +3,7 @@ import Navbar from './components/layout/Navbar';
 import Landing from './pages/Landing';
 import Analyzer from './pages/Analyzer';
 import History from './pages/History';
+import Workload from './pages/Workload';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -20,6 +21,7 @@ function App() {
       <main className="flex-1 flex flex-col">
         {currentPage === 'home' && <Landing onNavigate={handleNavigate} />}
         {currentPage === 'analyzer' && <Analyzer initialQuery={sampleQuery} />}
+        {currentPage === 'workload' && <Workload />}
         {currentPage === 'history' && <History />}
       </main>
     </div>

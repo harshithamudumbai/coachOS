@@ -83,4 +83,55 @@ Do not hallucinate. Think like a production DBA formatting a static analysis rep
   }
 }
 
-module.exports = { analyzeWithAI };
+async function analyzeWorkloadWithAI(engineReports, totalPatterns) {
+  if (!process.env.GROQ_API_KEY) {
+    throw new Error("GROQ_API_KEY is not configured in .env");
+  }
+  const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+  
+  const systemPrompt = `You are Dr.Query, a Principal Database Performance Engineer.
+You are generating a Database Workload Roadmap based on a Slow Query Log parsed by our deterministic engine.
+Return ONLY valid JSON. No markdown, no backticks.`;
+
+  const userPrompt = `
+We parsed a MySQL Slow Query Log containing ${totalPatterns} unique query patterns.
+Here are the top worst offenders identified and analyzed by our Deterministic Engine:
+
+${JSON.stringify(engineReports, null, 2)}
+
+Provide an executive roadmap for optimizing this database workload.
+Return EXACTLY this JSON structure:
+{
+  "executiveSummary": "<2-3 sentences summarizing the overall health of the database based on the workload>",
+  "primaryBottlenecks": ["<bottleneck 1>", "<bottleneck 2>"],
+  "workloadRecommendations": [
+    {
+      "priority": 1,
+      "title": "<e.g. Add Composite Index to users table>",
+      "rationale": "<why>",
+      "estimatedImpact": "<impact>"
+    }
+  ]
+}`;
+
+  try {
+    const response = await groq.chat.completions.create({
+      model: 'llama-3.3-70b-versatile',
+      max_tokens: 1500,
+      temperature: 0.1,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ]
+    });
+
+    const raw = response.choices[0].message.content.trim();
+    const cleaned = raw.replace(/^```json\n?/, '').replace(/```$/, '').trim();
+    return JSON.parse(cleaned);
+  } catch (error) {
+    console.error("Groq API error:", error);
+    throw new Error("AI workload analysis failed.");
+  }
+}
+
+module.exports = { analyzeWithAI, analyzeWorkloadWithAI };

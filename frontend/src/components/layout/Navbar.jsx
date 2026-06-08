@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, BarChart3, History } from 'lucide-react';
+import { Search, BarChart3, History, Cpu } from 'lucide-react';
 
 export default function Navbar({ currentPage, onNavigate }) {
   return (
@@ -33,6 +33,13 @@ export default function Navbar({ currentPage, onNavigate }) {
           >
             <BarChart3 className="w-4 h-4" />
             Investigation
+          </button>
+          <button 
+            onClick={() => onNavigate('workload')}
+            className={`flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground ${currentPage === 'workload' ? 'text-foreground' : 'text-muted-foreground'}`}
+          >
+            <Cpu className="w-4 h-4" />
+            Workload
           </button>
           <button 
             onClick={() => onNavigate('history')}
