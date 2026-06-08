@@ -30,7 +30,8 @@
   .modern-card {
     background-color: #111827;
     border: 1px solid #1F2937;
-    @apply shadow-soft rounded-xl transition-all duration-200;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+    @apply rounded-xl transition-all duration-200;
   }
   
   .modern-card-hover:hover {
@@ -42,7 +43,8 @@
   .math-panel {
     background-color: rgba(17, 24, 39, 0.9); /* bg-card/90 */
     border: 1px solid #1F2937;
-    @apply backdrop-blur-sm rounded-xl shadow-soft relative overflow-hidden;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+    @apply backdrop-blur-sm rounded-xl relative overflow-hidden;
   }
   
   .math-panel::before {
@@ -55,7 +57,8 @@
   }
 
   .math-button {
-    @apply bg-primary hover:bg-blue-600 text-white font-medium px-6 py-2 rounded-lg shadow-soft transition-all duration-200 flex items-center justify-center gap-2;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+    @apply bg-primary hover:bg-blue-600 text-white font-medium px-6 py-2 rounded-lg transition-all duration-200 flex items-center justify-center gap-2;
     font-family: 'Inter', sans-serif;
   }
 
