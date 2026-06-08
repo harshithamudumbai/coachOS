@@ -34,7 +34,7 @@ async function analyze(req, res, next) {
     await pool.execute(
       `INSERT INTO analysis_history (id, query_text, schema_text, indexes_text, pasted_explain_text, health_score, analysis_json, ip_hash)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [id, query, schema || null, indexes || null, pastedExplain || null, analysis.health_score, JSON.stringify(analysis), ipHash]
+      [id, query, schema || null, indexes || null, pastedExplain || null, analysis.healthScore, JSON.stringify(analysis), ipHash]
     );
 
     res.json({ id, ...analysis });
