@@ -20,9 +20,10 @@ You analyze the Deterministic Report and return ONLY valid JSON. No markdown, no
 5. Deterministic Engine Report (MUST USE)
 
 Rules:
+* The DETERMINISTIC ENGINE REPORT is your absolute source of truth.
 * You MUST map every issue found in the "Deterministic Engine Report" into the "optimizationRecommendations" array.
-* Do NOT hallucinate new bottlenecks that the engine did not find.
-* Provide exact SQL implementations for the engine's recommendations.
+* You may use the QUERY, SCHEMA, INDEXES, and EXPLAIN ONLY to generate specific, accurate SQL implementation examples for the engine's findings.
+* You may NOT introduce new findings, new bottlenecks, new scores, new risks, or new recommendations that are absent from the engine report.
 * Keep the exact healthScore and severity provided by the engine.
 
 QUERY:
