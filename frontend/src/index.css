@@ -7,11 +7,11 @@
     color-scheme: dark;
   }
   body {
-    background-color: #0B0F17;
+    background-color: #121212;
     background-image: 
-      linear-gradient(rgba(245, 245, 245, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(245, 245, 245, 0.03) 1px, transparent 1px);
-    background-size: 30px 30px;
+      linear-gradient(#1A1A1A 1px, transparent 1px),
+      linear-gradient(90deg, #1A1A1A 1px, transparent 1px);
+    background-size: 40px 40px;
     background-position: -1px -1px;
     @apply text-foreground antialiased selection:bg-primary/30 selection:text-primary;
     font-family: 'Inter', sans-serif;
@@ -19,52 +19,38 @@
   
   /* Academic Headings */
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', sans-serif;
-    letter-spacing: -0.02em;
+    font-family: 'IBM Plex Serif', serif;
+    letter-spacing: -0.01em;
     @apply text-foreground font-bold;
   }
 }
 
 @layer utilities {
-  /* Theorem Cards / Proof Panels */
+  /* Flat UI Cards */
   .modern-card {
-    background-color: #0d131f; /* Slightly lighter than background */
-    border: 1px solid rgba(245, 245, 245, 0.08); /* Chalk border */
-    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
-    @apply rounded-xl transition-all duration-200;
+    background-color: #1A1A1A;
+    border: 1px solid #333333;
+    @apply rounded-none transition-all duration-200;
   }
   
   .modern-card-hover:hover {
-    border-color: rgba(79, 140, 255, 0.3); /* Math Blue border on hover */
-    @apply shadow-xl -translate-y-0.5;
+    border-color: #F5B041;
   }
 
-  /* Academic Accents */
+  /* Notebook Panels */
   .math-panel {
-    background-color: rgba(13, 19, 31, 0.9);
-    border: 1px solid rgba(245, 245, 245, 0.08);
-    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
-    @apply backdrop-blur-sm rounded-xl relative overflow-hidden;
-  }
-  
-  .math-panel::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #4F8CFF, #F4D03F); /* Math Blue to Sigma Yellow */
-    opacity: 0.8;
+    background-color: #1A1A1A;
+    border: 1px solid #333333;
+    @apply rounded-none relative overflow-hidden;
   }
 
   .math-button {
-    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
-    @apply bg-primary hover:bg-blue-600 text-white font-medium px-6 py-2 rounded-lg transition-all duration-200 flex items-center justify-center gap-2;
-    font-family: 'Space Grotesk', sans-serif;
-    letter-spacing: 0.02em;
+    @apply bg-primary hover:bg-[#D4AC0D] text-[#121212] font-semibold px-6 py-2 rounded-none transition-all duration-200 flex items-center justify-center gap-2 border border-transparent hover:border-[#121212];
+    font-family: 'IBM Plex Serif', serif;
   }
 
   .math-button:active {
-    @apply scale-95;
+    @apply scale-[0.98];
   }
 
   .math-button:disabled {
@@ -72,35 +58,25 @@
   }
 
   .math-input {
-    @apply w-full bg-[#080b11] border border-[rgba(245,245,245,0.1)] p-4 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary transition-all shadow-inner;
+    @apply w-full bg-[#121212] border border-[#333333] p-4 rounded-none text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.875rem;
   }
 
-  /* Proof Badges */
+  /* Status Indicators */
   .badge-success {
-    @apply bg-[#22C55E]/10 text-[#22C55E] border border-[#22C55E]/20 px-2.5 py-0.5 rounded text-xs font-mono tracking-wider font-bold uppercase;
+    @apply bg-[#2ECC71]/10 text-[#2ECC71] border border-[#2ECC71]/30 px-2.5 py-0.5 rounded-none text-xs font-mono tracking-wider font-bold uppercase;
   }
   
   .badge-warning {
-    @apply bg-[#F4D03F]/10 text-[#F4D03F] border border-[#F4D03F]/20 px-2.5 py-0.5 rounded text-xs font-mono tracking-wider font-bold uppercase;
+    @apply bg-[#F5B041]/10 text-[#F5B041] border border-[#F5B041]/30 px-2.5 py-0.5 rounded-none text-xs font-mono tracking-wider font-bold uppercase;
   }
   
   .badge-danger {
-    @apply bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/20 px-2.5 py-0.5 rounded text-xs font-mono tracking-wider font-bold uppercase;
+    @apply bg-[#E74C3C]/10 text-[#E74C3C] border border-[#E74C3C]/30 px-2.5 py-0.5 rounded-none text-xs font-mono tracking-wider font-bold uppercase;
   }
 
   .highlighter {
-    @apply bg-primary/20 text-primary px-1 rounded font-mono;
-  }
-  
-  .math-symbol-float {
-    animation: float 6s ease-in-out infinite;
-  }
-  
-  @keyframes float {
-    0% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-10px) rotate(5deg); }
-    100% { transform: translateY(0px) rotate(0deg); }
+    @apply bg-primary/20 text-primary px-1 rounded-none font-mono;
   }
 }

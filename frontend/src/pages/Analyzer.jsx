@@ -44,9 +44,9 @@ export default function Analyzer({ initialQuery = '' }) {
         <div className="lg:col-span-4 flex flex-col gap-6 sticky top-20">
           <div className="math-panel p-6 flex flex-col gap-6">
             
-            <div>
-              <h2 className="text-2xl font-bold mb-1 text-foreground">SQL Notebook</h2>
-              <p className="text-sm text-muted-foreground font-mono">Define your hypothesis below.</p>
+            <div className="border-b border-[#333333] pb-4">
+              <h2 className="text-2xl font-bold mb-1 text-foreground">Investigation Parameters</h2>
+              <p className="text-sm text-muted-foreground font-mono">Submit evidence below.</p>
             </div>
 
             <QueryInput value={query} onChange={setQuery} />
@@ -58,7 +58,7 @@ export default function Analyzer({ initialQuery = '' }) {
             </div>
 
             {error && (
-              <div className="p-4 bg-danger/10 border border-danger/20 text-danger rounded-lg flex gap-3 text-sm font-mono">
+              <div className="p-4 bg-danger/10 border border-danger text-danger rounded-none flex gap-3 text-sm font-mono">
                 <AlertCircle className="w-5 h-5 shrink-0" />
                 <p>{error}</p>
               </div>
@@ -72,10 +72,10 @@ export default function Analyzer({ initialQuery = '' }) {
               {isLoading ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  Deriving Proof...
+                  Investigating...
                 </>
               ) : (
-                'Run Analysis'
+                '[ Analyze Evidence ]'
               )}
             </button>
           </div>
@@ -84,28 +84,27 @@ export default function Analyzer({ initialQuery = '' }) {
         {/* Results Column (60%) */}
         <div className="lg:col-span-6">
           {!data && !isLoading && (
-            <div className="h-full min-h-[500px] modern-card flex flex-col items-center justify-center text-center p-8 text-muted-foreground border-dashed border-2 bg-transparent border-[rgba(245,245,245,0.1)]">
-              <div className="w-20 h-20 rounded-full bg-secondary/10 flex items-center justify-center mb-6 border border-secondary/20">
-                <span className="font-serif text-5xl text-secondary">∅</span>
+            <div className="h-full min-h-[500px] modern-card flex flex-col items-center justify-center text-center p-8 text-muted-foreground border-dashed">
+              <div className="w-20 h-20 bg-[#121212] border border-[#333333] flex items-center justify-center mb-6">
+                <span className="font-serif text-3xl text-[#333333]">∅</span>
               </div>
-              <h3 className="text-2xl font-bold text-foreground mb-2">Awaiting Hypothesis</h3>
+              <h3 className="text-2xl font-bold text-foreground mb-2">Awaiting Evidence</h3>
               <p className="text-sm max-w-sm leading-relaxed font-mono">
-                No theorem submitted yet. Enter a <span className="text-primary font-semibold">SELECT</span> query to derive an execution proof and identify bottlenecks.
+                No investigation submitted yet. Enter a <span className="text-primary font-semibold">SELECT</span> query to begin.
               </p>
             </div>
           )}
 
           {isLoading && (
-            <div className="h-full min-h-[500px] modern-card flex flex-col items-center justify-center text-center p-8 bg-card/50">
+            <div className="h-full min-h-[500px] modern-card flex flex-col items-center justify-center text-center p-8 bg-[#1A1A1A]">
               <div className="relative mb-8">
                 <Loader2 className="w-16 h-16 animate-spin text-primary" />
-                <span className="absolute inset-0 flex items-center justify-center font-serif text-2xl text-secondary">∫</span>
               </div>
-              <h3 className="text-xl font-bold text-foreground animate-pulse mb-3">Deriving Execution Proof...</h3>
-              <p className="text-sm text-primary font-mono max-w-md mx-auto mb-2 bg-primary/10 p-3 rounded-md border border-primary/20">
+              <h3 className="text-xl font-bold text-foreground animate-pulse mb-3">Compiling Detective Report...</h3>
+              <p className="text-sm text-primary font-mono max-w-md mx-auto mb-2 bg-[#121212] p-3 border border-[#333333]">
                 {loadingQuote}
               </p>
-              <p className="text-xs text-muted-foreground mt-4 font-mono">Calculating complexity. Please wait...</p>
+              <p className="text-xs text-muted-foreground mt-4 font-mono">Examining indexes and table scans. Please wait...</p>
             </div>
           )}
 

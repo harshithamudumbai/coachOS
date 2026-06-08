@@ -15,45 +15,45 @@ export default {
     },
     extend: {
       colors: {
-        border: '#1F2937',
-        input: '#1F2937',
-        ring: '#4F8CFF', /* Math Blue */
-        background: '#0B0F17',
-        foreground: '#F5F5F5', /* Chalk White */
-        card: '#111827',
+        border: '#333333',
+        input: '#1A1A1A',
+        ring: '#F5B041', /* Warm Yellow */
+        background: '#121212', /* Near-black paper */
+        foreground: '#EAEAEA', /* Off-white */
+        card: '#1A1A1A', /* Dark charcoal */
         primary: {
-          DEFAULT: '#4F8CFF', /* Math Blue */
-          foreground: '#F5F5F5', /* Chalk White */
+          DEFAULT: '#F5B041', /* Warm Yellow */
+          foreground: '#121212',
         },
         secondary: {
-          DEFAULT: '#F4D03F', /* Sigma Yellow */
-          foreground: '#0B0F17',
+          DEFAULT: '#3498DB', /* Scientific Blue */
+          foreground: '#EAEAEA',
         },
         muted: {
-          DEFAULT: '#111827',
+          DEFAULT: '#222222',
           foreground: '#9CA3AF',
         },
         accent: {
-          DEFAULT: '#1F2937',
-          foreground: '#F5F5F5',
+          DEFAULT: '#333333',
+          foreground: '#EAEAEA',
         },
-        success: '#22C55E', /* Proof Green */
-        warning: '#F4D03F', /* Sigma Yellow */
-        danger: '#EF4444', /* Error Red */
+        success: '#2ECC71',
+        warning: '#F5B041',
+        danger: '#E74C3C',
       },
       borderRadius: {
-        xl: '1rem',
-        lg: '0.5rem',
-        md: '0.375rem',
-        sm: '0.25rem',
+        xl: '0px',
+        lg: '0px',
+        md: '0px',
+        sm: '0px',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
-        display: ['Space Grotesk', 'sans-serif'],
+        display: ['IBM Plex Serif', 'serif'],
       },
       boxShadow: {
-        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.5)',
+        'soft': 'none',
       }
     },
   },

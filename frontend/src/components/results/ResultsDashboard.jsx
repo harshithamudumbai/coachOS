@@ -1,5 +1,4 @@
 import React from 'react';
-import { Sigma, CheckCircle2, Copy } from 'lucide-react';
 
 export default function ResultsDashboard({ data }) {
   if (!data) return null;
@@ -12,81 +11,89 @@ export default function ResultsDashboard({ data }) {
 
   const getSeverityBadge = (severity) => {
     const s = severity.toLowerCase();
-    if (s === 'critical' || s === 'high') return <span className="badge-danger">{severity}</span>;
-    if (s === 'medium') return <span className="badge-warning">{severity}</span>;
-    return <span className="badge-success">{severity}</span>;
+    if (s === 'critical' || s === 'high') return <span className="bg-danger text-[#121212] px-2 py-1 text-[10px] font-mono font-bold uppercase tracking-wider">{severity}</span>;
+    if (s === 'medium') return <span className="bg-warning text-[#121212] px-2 py-1 text-[10px] font-mono font-bold uppercase tracking-wider">{severity}</span>;
+    return <span className="bg-success text-[#121212] px-2 py-1 text-[10px] font-mono font-bold uppercase tracking-wider">{severity}</span>;
   };
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500 font-mono text-sm">
       
       {/* Header Summary */}
-      <div className="math-panel p-6 flex flex-col md:flex-row items-center justify-between gap-6 border-l-4 border-l-primary">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-2">
-            <Sigma className="w-5 h-5 text-primary" />
-            <h2 className="text-2xl font-display font-bold text-foreground">Execution Proof Complete</h2>
-          </div>
-          <p className="text-muted-foreground text-sm leading-relaxed max-w-2xl font-mono">
-            {data.summary}
-          </p>
+      <div className="math-panel p-8">
+        <div className="border-b border-[#333333] pb-4 mb-6">
+          <h2 className="text-2xl font-serif font-bold text-foreground">Executive Summary</h2>
+          <div className="text-xs text-muted-foreground mt-1">CONFIDENTIAL REPORT</div>
         </div>
-        <div className="text-center md:text-right shrink-0 bg-background/50 p-4 rounded border border-[rgba(245,245,245,0.08)] min-w-[140px]">
-          <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest font-mono mb-1">
-            Efficiency(Q)
+        
+        <div className="flex flex-col md:flex-row gap-8">
+          <div className="flex-1 space-y-4">
+            <div>
+              <span className="text-muted-foreground font-bold uppercase tracking-wider text-xs">Overview:</span>
+              <p className="text-foreground mt-1 leading-relaxed">{data.summary}</p>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[#333333]">
+              <div>
+                <span className="text-muted-foreground font-bold uppercase tracking-wider text-xs block mb-1">Est. Speedup (Δt)</span>
+                <span className="text-xl font-serif font-bold text-success">{data.estimated_improvement}</span>
+              </div>
+              <div>
+                <span className="text-muted-foreground font-bold uppercase tracking-wider text-xs block mb-1">Complexity O(n)</span>
+                <span className="text-xl font-serif font-bold text-foreground">{data.execution_complexity}</span>
+              </div>
+              <div>
+                <span className="text-muted-foreground font-bold uppercase tracking-wider text-xs block mb-1">Rows Scanned</span>
+                <span className="text-xl font-serif font-bold text-foreground">{data.tables_scanned}</span>
+              </div>
+              <div>
+                <span className="text-muted-foreground font-bold uppercase tracking-wider text-xs block mb-1">Missing Indexes</span>
+                <span className="text-xl font-serif font-bold text-danger">{data.missing_indexes?.length || 0}</span>
+              </div>
+            </div>
           </div>
-          <div className={`text-5xl font-serif font-black ${getHealthColor(data.health_score)}`}>
-            = {data.health_score}
+          
+          <div className="bg-[#121212] border border-[#333333] p-6 shrink-0 flex flex-col justify-center items-center min-w-[160px]">
+            <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">Efficiency(Q)</div>
+            <div className={`text-6xl font-serif font-black ${getHealthColor(data.health_score)}`}>
+              {data.health_score}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Metrics Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="math-panel p-4 flex flex-col items-center justify-center text-center">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-1">Δ(t)</span>
-          <div className="text-2xl font-display font-bold text-success">{data.estimated_improvement}</div>
-        </div>
-        <div className="math-panel p-4 flex flex-col items-center justify-center text-center">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-1">O(n)</span>
-          <div className="text-2xl font-display font-bold text-foreground">{data.execution_complexity}</div>
-        </div>
-        <div className="math-panel p-4 flex flex-col items-center justify-center text-center">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-1">|Rows|</span>
-          <div className="text-2xl font-display font-bold text-foreground">{data.tables_scanned}</div>
-        </div>
-        <div className="math-panel p-4 flex flex-col items-center justify-center text-center border-b-2 border-b-danger">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-1">∅ Indexes</span>
-          <div className="text-2xl font-display font-bold text-danger">{data.missing_indexes?.length || 0}</div>
-        </div>
-      </div>
-
-      {/* Bottlenecks / Theorems */}
+      {/* Findings */}
       {data.bottlenecks?.length > 0 && (
-        <div className="math-panel p-6 border-t-2 border-t-warning">
-          <h3 className="text-xl font-display font-bold mb-4 text-foreground flex items-center gap-2">
-            Theorems
-          </h3>
-          <div className="flex flex-col gap-6 mt-2">
+        <div className="math-panel p-8">
+          <div className="border-b border-[#333333] pb-4 mb-6">
+            <h2 className="text-2xl font-serif font-bold text-foreground">Investigation Findings</h2>
+            <div className="text-xs text-muted-foreground mt-1">{data.bottlenecks.length} ISSUES IDENTIFIED</div>
+          </div>
+          
+          <div className="flex flex-col gap-8">
             {data.bottlenecks.map((b, index) => (
-              <div key={b.id} className="p-4 bg-background/50 border border-[rgba(245,245,245,0.08)] rounded font-mono">
-                <div className="flex items-start justify-between mb-3 gap-4 border-b border-[rgba(245,245,245,0.08)] pb-3">
-                  <span className="font-bold text-foreground text-sm leading-snug">Theorem {index + 1}: {b.problem}</span>
-                  <div className="shrink-0">{getSeverityBadge(b.severity)}</div>
+              <div key={b.id} className="relative pl-6 border-l-2 border-[#333333]">
+                <div className="absolute -left-[9px] top-0 w-4 h-4 bg-[#121212] border-2 border-[#333333] rounded-none"></div>
+                
+                <div className="flex items-start justify-between mb-4">
+                  <h3 className="font-bold text-foreground text-lg font-serif">Finding #{index + 1}</h3>
+                  {getSeverityBadge(b.severity)}
                 </div>
                 
-                <div className="mb-4">
-                  <span className="text-danger font-bold uppercase tracking-wider text-xs">Proof:</span>
-                  <p className="text-sm text-muted-foreground mt-1 pl-3 border-l-2 border-danger">
-                    {b.impact}
-                  </p>
-                </div>
-                
-                <div>
-                  <span className="text-success font-bold uppercase tracking-wider text-xs">Corollary (Fix):</span>
-                  <div className="flex items-start gap-2 mt-1">
-                    <CheckCircle2 className="w-4 h-4 text-success shrink-0 mt-0.5" />
-                    <p className="text-foreground text-sm">{b.fix}</p>
+                <div className="space-y-4">
+                  <div>
+                    <span className="text-danger font-bold uppercase tracking-wider text-xs">Observation:</span>
+                    <p className="text-foreground mt-1">{b.problem}</p>
+                  </div>
+                  
+                  <div>
+                    <span className="text-muted-foreground font-bold uppercase tracking-wider text-xs">Impact Evidence:</span>
+                    <p className="text-muted-foreground mt-1 pl-3 border-l border-[#333333]">{b.impact}</p>
+                  </div>
+                  
+                  <div>
+                    <span className="text-success font-bold uppercase tracking-wider text-xs">Recommendation:</span>
+                    <p className="text-foreground mt-1">{b.fix}</p>
                   </div>
                 </div>
               </div>
@@ -97,21 +104,23 @@ export default function ResultsDashboard({ data }) {
 
       {/* Rewritten Query */}
       {data.rewritten_query && (
-        <div className="math-panel p-6">
-          <h3 className="text-xl font-display font-bold mb-4 text-foreground flex items-center gap-2">
-            <Copy className="w-5 h-5 text-primary" />
-            Optimized Formula
-          </h3>
+        <div className="math-panel p-8">
+          <div className="border-b border-[#333333] pb-4 mb-6">
+            <h2 className="text-2xl font-serif font-bold text-foreground">Optimization Proposal</h2>
+            <div className="text-xs text-muted-foreground mt-1">REVISED SQL STATEMENT</div>
+          </div>
           
-          <div className="font-mono text-sm mb-4">
-            <span className="text-primary font-bold uppercase tracking-wider text-xs">Observe:</span>
-            <p className="text-muted-foreground mt-1 pl-3 border-l-2 border-primary mb-4">
-              {data.rewrite_explanation}
-            </p>
+          <div className="space-y-6">
+            <div>
+              <span className="text-primary font-bold uppercase tracking-wider text-xs">Strategic Rationale:</span>
+              <p className="text-foreground mt-1 pl-3 border-l-2 border-primary">
+                {data.rewrite_explanation}
+              </p>
+            </div>
             
-            <span className="text-success font-bold uppercase tracking-wider text-xs">Therefore:</span>
-            <div className="relative group mt-1">
-              <pre className="p-4 bg-[#080b11] text-foreground overflow-x-auto rounded border border-[rgba(245,245,245,0.08)] shadow-inner">
+            <div>
+              <span className="text-success font-bold uppercase tracking-wider text-xs mb-2 block">Proposed Code:</span>
+              <pre className="p-4 bg-[#121212] border border-[#333333] text-foreground overflow-x-auto shadow-none">
                 {data.rewritten_query}
               </pre>
             </div>
