@@ -49,9 +49,6 @@ async function analyzeWorkload(req, res, next) {
     // 4. Send to AI to generate the Workload Dashboard
     const aiReport = await analyzeWorkloadWithAI(engineReports, aggregatedQueries.length);
 
-    // Clean up uploaded file
-    fs.unlinkSync(req.file.path);
-
     res.json({
       globalMetrics: {
         uniquePatterns: aggregatedQueries.length,
@@ -63,6 +60,14 @@ async function analyzeWorkload(req, res, next) {
     });
   } catch (err) {
     next(err);
+  } finally {
+    if (req.file && req.file.path && fs.existsSync(req.file.path)) {
+      try {
+        fs.unlinkSync(req.file.path);
+      } catch (cleanupErr) {
+        console.error("Failed to clean up temp file:", cleanupErr);
+      }
+    }
   }
 }
 

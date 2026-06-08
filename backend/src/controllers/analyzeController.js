@@ -56,7 +56,10 @@ async function analyze(req, res, next) {
            // Strict Security Guardrail: Reject destructive commands completely
            const hasDestructive = /\b(INSERT|UPDATE|DELETE|DROP|ALTER|TRUNCATE|REPLACE|GRANT|REVOKE)\b/.test(upperRewrite);
            
-           if (isSelect && !hasDestructive) {
+           // Strict Security Guardrail: Reject multiple statements (SQL injection risk)
+           const hasMultipleStatements = upperRewrite.indexOf(';') !== -1 && upperRewrite.indexOf(';') < upperRewrite.length - 1;
+           
+           if (isSelect && !hasDestructive && !hasMultipleStatements) {
              const rewriteExplainOutput = await runExplain(rewrite);
              const rewriteParsed = parseExplainOutput(rewriteExplainOutput);
              

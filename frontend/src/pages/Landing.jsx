@@ -101,6 +101,39 @@ export default function Landing({ onNavigate }) {
           </div>
         </motion.div>
       </section>
+
+      {/* Statistics Section */}
+      <section className="w-full bg-[#121212] border-t border-b border-[#333333] py-16 relative z-10">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="mb-12 text-center">
+            <h2 className="text-3xl font-serif font-bold text-foreground">Dr.Query Intelligence</h2>
+            <div className="text-xs text-muted-foreground mt-2 font-mono uppercase tracking-widest">PERFORMANCE METRICS</div>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 text-center font-mono text-sm">
+            <div className="flex flex-col items-center">
+              <div className="text-4xl font-black text-primary mb-2">18</div>
+              <div className="text-muted-foreground uppercase tracking-widest text-xs">Optimization Rules</div>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="text-4xl font-black text-success mb-2">95%+</div>
+              <div className="text-muted-foreground uppercase tracking-widest text-xs">Test Coverage</div>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="text-4xl font-black text-foreground mb-2">100%</div>
+              <div className="text-muted-foreground uppercase tracking-widest text-xs">Benchmark Validation</div>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="text-4xl font-black text-warning mb-2">Logs</div>
+              <div className="text-muted-foreground uppercase tracking-widest text-xs">Fingerprint Forensics</div>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="text-4xl font-black text-danger mb-2">Top 5</div>
+              <div className="text-muted-foreground uppercase tracking-widest text-xs">Offender Ranking</div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
