@@ -9,15 +9,15 @@
   body {
     background-color: #0B0F17;
     background-image: 
-      linear-gradient(rgba(31, 41, 55, 0.4) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(31, 41, 55, 0.4) 1px, transparent 1px);
-    background-size: 32px 32px;
+      linear-gradient(rgba(245, 245, 245, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245, 245, 245, 0.03) 1px, transparent 1px);
+    background-size: 30px 30px;
     background-position: -1px -1px;
-    @apply text-foreground antialiased selection:bg-blue-500/30 selection:text-blue-200;
+    @apply text-foreground antialiased selection:bg-primary/30 selection:text-primary;
     font-family: 'Inter', sans-serif;
   }
   
-  /* Reset some default margins for better rhythm */
+  /* Academic Headings */
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Space Grotesk', sans-serif;
     letter-spacing: -0.02em;
@@ -26,23 +26,23 @@
 }
 
 @layer utilities {
-  /* Modern Dark Cards */
+  /* Theorem Cards / Proof Panels */
   .modern-card {
-    background-color: #111827;
-    border: 1px solid #1F2937;
+    background-color: #0d131f; /* Slightly lighter than background */
+    border: 1px solid rgba(245, 245, 245, 0.08); /* Chalk border */
     box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
     @apply rounded-xl transition-all duration-200;
   }
   
   .modern-card-hover:hover {
-    border-color: #475569; /* slate-600 */
+    border-color: rgba(79, 140, 255, 0.3); /* Math Blue border on hover */
     @apply shadow-xl -translate-y-0.5;
   }
 
-  /* Math/Retro Accents */
+  /* Academic Accents */
   .math-panel {
-    background-color: rgba(17, 24, 39, 0.9); /* bg-card/90 */
-    border: 1px solid #1F2937;
+    background-color: rgba(13, 19, 31, 0.9);
+    border: 1px solid rgba(245, 245, 245, 0.08);
     box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
     @apply backdrop-blur-sm rounded-xl relative overflow-hidden;
   }
@@ -52,14 +52,15 @@
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 2px;
-    background: linear-gradient(90deg, #3B82F6, #F59E0B);
+    background: linear-gradient(90deg, #4F8CFF, #F4D03F); /* Math Blue to Sigma Yellow */
     opacity: 0.8;
   }
 
   .math-button {
     box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
     @apply bg-primary hover:bg-blue-600 text-white font-medium px-6 py-2 rounded-lg transition-all duration-200 flex items-center justify-center gap-2;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: 0.02em;
   }
 
   .math-button:active {
@@ -71,25 +72,35 @@
   }
 
   .math-input {
-    @apply w-full bg-[#0B0F17] border border-border p-4 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all shadow-inner;
+    @apply w-full bg-[#080b11] border border-[rgba(245,245,245,0.1)] p-4 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary transition-all shadow-inner;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.875rem;
   }
 
-  /* Status Indicators */
+  /* Proof Badges */
   .badge-success {
-    @apply bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20 px-2.5 py-0.5 rounded-full text-xs font-semibold;
+    @apply bg-[#22C55E]/10 text-[#22C55E] border border-[#22C55E]/20 px-2.5 py-0.5 rounded text-xs font-mono tracking-wider font-bold uppercase;
   }
   
   .badge-warning {
-    @apply bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20 px-2.5 py-0.5 rounded-full text-xs font-semibold;
+    @apply bg-[#F4D03F]/10 text-[#F4D03F] border border-[#F4D03F]/20 px-2.5 py-0.5 rounded text-xs font-mono tracking-wider font-bold uppercase;
   }
   
   .badge-danger {
-    @apply bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/20 px-2.5 py-0.5 rounded-full text-xs font-semibold;
+    @apply bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/20 px-2.5 py-0.5 rounded text-xs font-mono tracking-wider font-bold uppercase;
   }
 
   .highlighter {
-    @apply bg-primary/20 text-blue-200 px-1 rounded;
+    @apply bg-primary/20 text-primary px-1 rounded font-mono;
+  }
+  
+  .math-symbol-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
   }
 }

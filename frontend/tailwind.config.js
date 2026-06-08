@@ -17,16 +17,16 @@ export default {
       colors: {
         border: '#1F2937',
         input: '#1F2937',
-        ring: '#3B82F6',
+        ring: '#4F8CFF', /* Math Blue */
         background: '#0B0F17',
-        foreground: '#F9FAFB',
+        foreground: '#F5F5F5', /* Chalk White */
         card: '#111827',
         primary: {
-          DEFAULT: '#3B82F6',
-          foreground: '#F9FAFB',
+          DEFAULT: '#4F8CFF', /* Math Blue */
+          foreground: '#F5F5F5', /* Chalk White */
         },
         secondary: {
-          DEFAULT: '#F59E0B',
+          DEFAULT: '#F4D03F', /* Sigma Yellow */
           foreground: '#0B0F17',
         },
         muted: {
@@ -35,11 +35,11 @@ export default {
         },
         accent: {
           DEFAULT: '#1F2937',
-          foreground: '#F9FAFB',
+          foreground: '#F5F5F5',
         },
-        success: '#10B981',
-        warning: '#F59E0B',
-        danger: '#EF4444',
+        success: '#22C55E', /* Proof Green */
+        warning: '#F4D03F', /* Sigma Yellow */
+        danger: '#EF4444', /* Error Red */
       },
       borderRadius: {
         xl: '1rem',

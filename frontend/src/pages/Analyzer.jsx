@@ -5,7 +5,7 @@ import ExplainInput from '../components/analyzer/ExplainInput';
 import IndexesInput from '../components/analyzer/IndexesInput';
 import ResultsDashboard from '../components/results/ResultsDashboard';
 import { useAnalyze } from '../hooks/useAnalyze';
-import { Loader2, AlertCircle, Database } from 'lucide-react';
+import { Loader2, AlertCircle } from 'lucide-react';
 
 const OPTIMIZATION_QUOTES = [
   '"Premature optimization is the root of all evil." — Donald Knuth',
@@ -45,8 +45,8 @@ export default function Analyzer({ initialQuery = '' }) {
           <div className="math-panel p-6 flex flex-col gap-6">
             
             <div>
-              <h2 className="text-2xl font-bold mb-1 text-foreground">Query Analyzer</h2>
-              <p className="text-sm text-muted-foreground">Paste your MySQL query below.</p>
+              <h2 className="text-2xl font-bold mb-1 text-foreground">SQL Notebook</h2>
+              <p className="text-sm text-muted-foreground font-mono">Define your hypothesis below.</p>
             </div>
 
             <QueryInput value={query} onChange={setQuery} />
@@ -58,7 +58,7 @@ export default function Analyzer({ initialQuery = '' }) {
             </div>
 
             {error && (
-              <div className="p-4 bg-danger/10 border border-danger/20 text-danger rounded-lg flex gap-3 text-sm">
+              <div className="p-4 bg-danger/10 border border-danger/20 text-danger rounded-lg flex gap-3 text-sm font-mono">
                 <AlertCircle className="w-5 h-5 shrink-0" />
                 <p>{error}</p>
               </div>
@@ -72,10 +72,10 @@ export default function Analyzer({ initialQuery = '' }) {
               {isLoading ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  Analyzing...
+                  Deriving Proof...
                 </>
               ) : (
-                'Analyze Query'
+                'Run Analysis'
               )}
             </button>
           </div>
@@ -84,25 +84,28 @@ export default function Analyzer({ initialQuery = '' }) {
         {/* Results Column (60%) */}
         <div className="lg:col-span-6">
           {!data && !isLoading && (
-            <div className="h-full min-h-[500px] modern-card flex flex-col items-center justify-center text-center p-8 text-muted-foreground border-dashed border-2 bg-transparent">
-              <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
-                <Database className="w-8 h-8 text-secondary-foreground" />
+            <div className="h-full min-h-[500px] modern-card flex flex-col items-center justify-center text-center p-8 text-muted-foreground border-dashed border-2 bg-transparent border-[rgba(245,245,245,0.1)]">
+              <div className="w-20 h-20 rounded-full bg-secondary/10 flex items-center justify-center mb-6 border border-secondary/20">
+                <span className="font-serif text-5xl text-secondary">∅</span>
               </div>
-              <h3 className="text-2xl font-bold text-foreground mb-2">Ready to Analyze</h3>
-              <p className="text-sm max-w-sm leading-relaxed">
-                Enter a <span className="text-primary font-semibold">SELECT</span> query to see execution plan breakdowns, bottleneck detection, and AI optimization suggestions.
+              <h3 className="text-2xl font-bold text-foreground mb-2">Awaiting Hypothesis</h3>
+              <p className="text-sm max-w-sm leading-relaxed font-mono">
+                No theorem submitted yet. Enter a <span className="text-primary font-semibold">SELECT</span> query to derive an execution proof and identify bottlenecks.
               </p>
             </div>
           )}
 
           {isLoading && (
             <div className="h-full min-h-[500px] modern-card flex flex-col items-center justify-center text-center p-8 bg-card/50">
-              <Loader2 className="w-12 h-12 animate-spin text-primary mb-6" />
-              <h3 className="text-xl font-bold text-foreground animate-pulse mb-3">Running EXPLAIN & AI Analysis</h3>
+              <div className="relative mb-8">
+                <Loader2 className="w-16 h-16 animate-spin text-primary" />
+                <span className="absolute inset-0 flex items-center justify-center font-serif text-2xl text-secondary">∫</span>
+              </div>
+              <h3 className="text-xl font-bold text-foreground animate-pulse mb-3">Deriving Execution Proof...</h3>
               <p className="text-sm text-primary font-mono max-w-md mx-auto mb-2 bg-primary/10 p-3 rounded-md border border-primary/20">
                 {loadingQuote}
               </p>
-              <p className="text-xs text-muted-foreground mt-4 font-mono">This usually takes 3-5 seconds...</p>
+              <p className="text-xs text-muted-foreground mt-4 font-mono">Calculating complexity. Please wait...</p>
             </div>
           )}
 
