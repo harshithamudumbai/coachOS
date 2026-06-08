@@ -13,7 +13,25 @@ async function analyzeWithAI({ query, schema, indexes, explainOutput, parsedExpl
 
 You analyze SQL queries and return ONLY valid JSON. No markdown, no backticks, no explanations outside JSON.`;
 
-  const userPrompt = `Analyze this MySQL query:
+  const userPrompt = `Analyze this MySQL query like a Senior DBA reviewing a production issue. Do not merely describe the execution plan. Proactively identify common performance patterns and suggest fixes.
+
+Look for issues such as:
+- N+1 query patterns (suggest JOINs).
+- Huge IN (...) lists (suggest temporary tables, staging tables, or JOINs).
+- Unnecessary SELECT * (recommend specific columns).
+- Functions on indexed columns (explain index loss, suggest alternatives).
+- OR conditions preventing index usage (suggest UNION ALL).
+- ORDER BY / GROUP BY causing filesort/temp tables (suggest suitable indexes).
+- Pagination with large OFFSET (suggest keyset/seek pagination).
+- Row explosion from JOINs (suggest filtering earlier).
+- Repeated subqueries (suggest JOINs, CTEs, or temp tables).
+- Aggregates on large datasets (suggest pre-aggregation or summary tables).
+- Queries that may simply be slow (recommend enabling Slow Query Log and provide the configuration snippet).
+
+Whenever recommending an optimization in the 'bottlenecks' array, provide:
+1. Why the issue occurs.
+2. Expected impact.
+3. Exact SQL example to implement the fix.
 
 QUERY:
 ${query}
@@ -37,8 +55,8 @@ Return this exact JSON structure (no extra keys, no markdown):
       "id": "<unique string>",
       "problem": "<clear problem title>",
       "severity": "<'Critical' | 'High' | 'Medium' | 'Low'>",
-      "impact": "<what this costs in production>",
-      "fix": "<specific actionable fix>"
+      "impact": "<what this costs in production. Include: 1. Why it occurs. 2. Expected impact.>",
+      "fix": "<Exact SQL example to implement the fix>"
     }
   ],
   "missing_indexes": [
