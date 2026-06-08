@@ -28,16 +28,21 @@
 @layer utilities {
   /* Modern Dark Cards */
   .modern-card {
-    @apply bg-card border border-border shadow-soft rounded-xl transition-all duration-200;
+    background-color: #111827;
+    border: 1px solid #1F2937;
+    @apply shadow-soft rounded-xl transition-all duration-200;
   }
   
   .modern-card-hover:hover {
-    @apply border-slate-600 shadow-xl -translate-y-0.5;
+    border-color: #475569; /* slate-600 */
+    @apply shadow-xl -translate-y-0.5;
   }
 
   /* Math/Retro Accents */
   .math-panel {
-    @apply bg-card/90 backdrop-blur-sm border border-border rounded-xl shadow-soft relative overflow-hidden;
+    background-color: rgba(17, 24, 39, 0.9); /* bg-card/90 */
+    border: 1px solid #1F2937;
+    @apply backdrop-blur-sm rounded-xl shadow-soft relative overflow-hidden;
   }
   
   .math-panel::before {
