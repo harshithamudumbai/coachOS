@@ -7,10 +7,11 @@ function runDeterministicAnalysis({ query, parsedExplain }) {
   // 1. SELECT *
   if (q.includes('select *')) {
     findings.push({
-      rule: 'SELECT *',
+      rule: 'SELECT_STAR',
       severity: 'Low',
       impact: 'Over-fetching, increased network transfer, prevents some covering-index opportunities',
-      recommendation: 'Select only required columns'
+      recommendation: 'Select only required columns',
+      evidence: 'Query contains "SELECT *"'
     });
     score -= 5;
   }
@@ -18,10 +19,11 @@ function runDeterministicAnalysis({ query, parsedExplain }) {
   // 2. Full Table Scan
   if (parsedExplain?.fullTableScans > 0) {
     findings.push({
-      rule: 'Full Table Scan',
+      rule: 'FULL_TABLE_SCAN',
       severity: 'High',
       impact: 'Entire table scanned',
-      recommendation: 'Investigate missing indexes, check WHERE clause selectivity'
+      recommendation: 'Investigate missing indexes, check WHERE clause selectivity',
+      evidence: `Found ${parsedExplain.fullTableScans} tables with accessType="ALL" (Tables: ${parsedExplain.missingIndexHints.join(', ')})`
     });
     score -= 25;
   }
@@ -29,10 +31,11 @@ function runDeterministicAnalysis({ query, parsedExplain }) {
   // 3. Filesort
   if (parsedExplain?.usingFilesort) {
     findings.push({
-      rule: 'Filesort',
+      rule: 'FILESORT',
       severity: 'High',
       impact: 'Additional sorting operation',
-      recommendation: 'Create index matching WHERE + ORDER BY sequence'
+      recommendation: 'Create index matching WHERE + ORDER BY sequence',
+      evidence: 'EXPLAIN indicated "using_filesort: true"'
     });
     score -= 15;
   }
@@ -40,10 +43,11 @@ function runDeterministicAnalysis({ query, parsedExplain }) {
   // 4. Temporary Table
   if (parsedExplain?.usingTemporaryTable) {
     findings.push({
-      rule: 'Temporary Table',
+      rule: 'TEMPORARY_TABLE',
       severity: 'High',
       impact: 'Increased memory and disk usage',
-      recommendation: 'Simplify grouping, add supporting indexes'
+      recommendation: 'Simplify grouping, add supporting indexes',
+      evidence: 'EXPLAIN indicated "using_temporary_table: true"'
     });
     score -= 15;
   }
@@ -51,10 +55,11 @@ function runDeterministicAnalysis({ query, parsedExplain }) {
   // 5. Large Row Examination
   if (parsedExplain?.totalRowsExamined > 100000) {
     findings.push({
-      rule: 'Large Row Examination',
+      rule: 'LARGE_ROW_EXAMINATION',
       severity: 'Medium',
       impact: 'Excessive data scanning',
-      recommendation: 'Improve filtering indexes'
+      recommendation: 'Improve filtering indexes',
+      evidence: `Total rows examined per scan estimated at ${parsedExplain.totalRowsExamined}`
     });
     score -= 10;
   }
@@ -66,10 +71,11 @@ function runDeterministicAnalysis({ query, parsedExplain }) {
       const commas = (match.match(/,/g) || []).length;
       if (commas > 100) {
         findings.push({
-          rule: 'Huge IN Clause',
+          rule: 'HUGE_IN_CLAUSE',
           severity: 'High',
           impact: 'Optimizer degradation, larger parsing cost',
-          recommendation: 'Load IDs into temporary table, join against temp table'
+          recommendation: 'Load IDs into temporary table, join against temp table',
+          evidence: `IN clause contains ${commas + 1} values`
         });
         score -= 10;
         break; // Only deduct once
@@ -81,22 +87,25 @@ function runDeterministicAnalysis({ query, parsedExplain }) {
   // Simple check: multiple WHERE clauses and ALL scan
   if (q.includes('where') && q.includes('and') && parsedExplain?.fullTableScans > 0) {
     findings.push({
-      rule: 'Missing Composite Index',
+      rule: 'MISSING_COMPOSITE_INDEX',
       severity: 'High',
       impact: 'Multiple index lookups or larger row scans',
-      recommendation: 'Create composite index matching filter order'
+      recommendation: 'Create composite index matching filter order',
+      evidence: 'Query uses multiple AND conditions but EXPLAIN shows a full table scan'
     });
     score -= 15;
   }
 
   // 8. Function on Indexed Column
   // simplistic regex to catch things like DATE(col) = or LOWER(col) =
-  if (/where\s+[\w]+\([\w]+\)\s*[=<>]/i.test(q)) {
+  const funcMatch = q.match(/where\s+([\w]+)\([\w]+\)\s*[=<>]/i);
+  if (funcMatch) {
     findings.push({
-      rule: 'Function on Indexed Column',
+      rule: 'FUNCTION_ON_INDEXED_COLUMN',
       severity: 'High',
       impact: 'Index becomes unusable',
-      recommendation: 'Rewrite predicate to avoid functions on columns'
+      recommendation: 'Rewrite predicate to avoid functions on columns',
+      evidence: `Detected function ${funcMatch[1]}() in WHERE clause`
     });
     score -= 15;
   }
@@ -105,10 +114,11 @@ function runDeterministicAnalysis({ query, parsedExplain }) {
   const orMatches = q.match(/\bor\b/g);
   if (orMatches && orMatches.length > 2) {
     findings.push({
-      rule: 'OR Condition Explosion',
+      rule: 'OR_CONDITION_EXPLOSION',
       severity: 'Medium',
       impact: 'Poor index utilization',
-      recommendation: 'Evaluate UNION ALL strategy'
+      recommendation: 'Evaluate UNION ALL strategy',
+      evidence: `Detected ${orMatches.length} OR conditions`
     });
   }
 
@@ -116,10 +126,11 @@ function runDeterministicAnalysis({ query, parsedExplain }) {
   const limitMatch = q.match(/limit\s+(\d+)\s*(?:,\s*\d+)?/i);
   if (limitMatch && parseInt(limitMatch[1], 10) > 5000) {
     findings.push({
-      rule: 'Pagination Risk',
+      rule: 'PAGINATION_RISK',
       severity: 'Medium',
       impact: 'Deep pagination cost',
-      recommendation: 'Use Keyset pagination'
+      recommendation: 'Use Keyset pagination',
+      evidence: `Detected large OFFSET: ${limitMatch[1]}`
     });
     score -= 5;
   }
