@@ -46,26 +46,38 @@ async function analyze(req, res, next) {
     if (analysis.queryRewriteSuggestions && analysis.queryRewriteSuggestions.length > 0) {
       try {
         const rewrite = analysis.queryRewriteSuggestions[0];
-        // Ensure it's a SELECT query and doesn't contain destructive commands
-        if (typeof rewrite === 'string' && rewrite.trim().toUpperCase().startsWith('SELECT')) {
-           const rewriteExplainOutput = await runExplain(rewrite);
-           const rewriteParsed = parseExplainOutput(rewriteExplainOutput);
+        
+        if (typeof rewrite === 'string') {
+           const upperRewrite = rewrite.trim().toUpperCase();
            
-           if (rewriteParsed && parsedExplain) {
-             const origRows = parsedExplain.totalRowsExamined;
-             const newRows = rewriteParsed.totalRowsExamined;
-             let improvementPercent = 0;
-             if (origRows > 0 && newRows < origRows) {
-               improvementPercent = Math.round(((origRows - newRows) / origRows) * 100);
-             }
+           // Strict Security Guardrail: Only allow SELECT or WITH
+           const isSelect = upperRewrite.startsWith('SELECT') || upperRewrite.startsWith('WITH');
+           
+           // Strict Security Guardrail: Reject destructive commands completely
+           const hasDestructive = /\b(INSERT|UPDATE|DELETE|DROP|ALTER|TRUNCATE|REPLACE|GRANT|REVOKE)\b/.test(upperRewrite);
+           
+           if (isSelect && !hasDestructive) {
+             const rewriteExplainOutput = await runExplain(rewrite);
+             const rewriteParsed = parseExplainOutput(rewriteExplainOutput);
+             
+             if (rewriteParsed && parsedExplain) {
+               const origRows = parsedExplain.totalRowsExamined;
+               const newRows = rewriteParsed.totalRowsExamined;
+               let improvementPercent = 0;
+               if (origRows > 0 && newRows < origRows) {
+                 improvementPercent = Math.round(((origRows - newRows) / origRows) * 100);
+               }
 
-             benchmarkResults = {
-               originalRows: origRows,
-               rewrittenRows: newRows,
-               improvementPercent: improvementPercent,
-               originalCost: parsedExplain.tables.reduce((acc, t) => acc + (parseFloat(t.costInfo?.query_cost || 0)), 0),
-               rewrittenCost: rewriteParsed.tables.reduce((acc, t) => acc + (parseFloat(t.costInfo?.query_cost || 0)), 0),
-             };
+               benchmarkResults = {
+                 originalRows: origRows,
+                 rewrittenRows: newRows,
+                 improvementPercent: improvementPercent,
+                 originalCost: parsedExplain.tables.reduce((acc, t) => acc + (parseFloat(t.costInfo?.query_cost || 0)), 0),
+                 rewrittenCost: rewriteParsed.tables.reduce((acc, t) => acc + (parseFloat(t.costInfo?.query_cost || 0)), 0),
+               };
+             }
+           } else {
+             console.warn("Benchmark skipped: Rewrite rejected by security guardrails.", rewrite);
            }
         }
       } catch (benchmarkErr) {

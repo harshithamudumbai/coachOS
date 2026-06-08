@@ -189,15 +189,15 @@ export default function ResultsDashboard({ data }) {
                 <span className="text-primary font-bold uppercase tracking-wider text-xs mb-4 block">Benchmark Proof:</span>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
-                    <div className="text-xs text-muted-foreground uppercase">Original Rows</div>
+                    <div className="text-xs text-muted-foreground uppercase">Est. Original Rows</div>
                     <div className="text-xl font-mono text-danger">{data.benchmarkResults.originalRows}</div>
                   </div>
                   <div>
-                    <div className="text-xs text-muted-foreground uppercase">Rewritten Rows</div>
+                    <div className="text-xs text-muted-foreground uppercase">Est. Rewritten Rows</div>
                     <div className="text-xl font-mono text-success">{data.benchmarkResults.rewrittenRows}</div>
                   </div>
                   <div>
-                    <div className="text-xs text-muted-foreground uppercase">Improvement</div>
+                    <div className="text-xs text-muted-foreground uppercase">Row Reduction</div>
                     <div className="text-xl font-mono text-primary">-{data.benchmarkResults.improvementPercent}%</div>
                   </div>
                   <div>
