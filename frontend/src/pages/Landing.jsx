@@ -17,7 +17,7 @@ export default function Landing({ onNavigate }) {
           className="flex-1 flex flex-col items-start"
         >
           <div className="mb-4 text-xs font-mono font-bold tracking-widest uppercase text-muted-foreground">
-            // INTERNAL INVESTIGATION TOOL
+            INTERNAL INVESTIGATION TOOL
           </div>
           
           <h1 className="text-6xl lg:text-8xl font-bold mb-6 text-foreground leading-none">
@@ -33,7 +33,7 @@ export default function Landing({ onNavigate }) {
               onClick={() => onNavigate('analyzer')}
               className="w-full sm:w-auto math-button"
             >
-              [ Open Investigation ]
+              Open Investigation
             </button>
           </div>
         </motion.div>
@@ -95,7 +95,7 @@ export default function Landing({ onNavigate }) {
                 onClick={() => onNavigate('analyzer', 'SELECT users.id, orders.total FROM users JOIN orders ON users.id = orders.user_id WHERE orders.created_at > \'2025-01-01\'')}
                 className="text-xs font-mono uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors flex items-center gap-2"
               >
-                [ Investigate Query ] <ArrowRight className="w-3 h-3" />
+                Investigate Query <ArrowRight className="w-3 h-3" />
               </button>
             </div>
           </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Database, BarChart3, History } from 'lucide-react';
+import { Search, BarChart3, History } from 'lucide-react';
 
 export default function Navbar({ currentPage, onNavigate }) {
   return (
@@ -12,7 +12,7 @@ export default function Navbar({ currentPage, onNavigate }) {
           onClick={() => onNavigate('home')}
         >
           <div className="w-8 h-8 bg-[#121212] border border-[#333333] flex items-center justify-center group-hover:border-[#F5B041] transition-colors">
-            <Database className="w-4 h-4 text-[#F5B041]" />
+            <Search className="w-4 h-4 text-[#F5B041]" />
           </div>
           <span className="font-display font-bold text-xl tracking-tight text-foreground">
             Dr.Query
@@ -45,9 +45,8 @@ export default function Navbar({ currentPage, onNavigate }) {
 
         {/* Status Right */}
         <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-[#121212] border border-[#333333] text-xs font-mono text-muted-foreground">
-            <span className="w-2 h-2 bg-success block"></span>
-            SYS_ONLINE
+          <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-[#121212] border border-[#333333] text-[10px] font-mono text-muted-foreground tracking-wider uppercase">
+            MySQL Supported (PgSQL Soon)
           </div>
         </div>
 

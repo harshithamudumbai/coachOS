@@ -45,7 +45,7 @@ export default function Analyzer({ initialQuery = '' }) {
           <div className="math-panel p-6 flex flex-col gap-6">
             
             <div className="border-b border-[#333333] pb-4">
-              <h2 className="text-2xl font-bold mb-1 text-foreground">Investigation Parameters</h2>
+              <h2 className="text-2xl font-bold mb-1 text-foreground">Query Forensics</h2>
               <p className="text-sm text-muted-foreground font-mono">Submit evidence below.</p>
             </div>
 
@@ -75,7 +75,7 @@ export default function Analyzer({ initialQuery = '' }) {
                   Investigating...
                 </>
               ) : (
-                '[ Analyze Evidence ]'
+                'Analyze Evidence'
               )}
             </button>
           </div>
