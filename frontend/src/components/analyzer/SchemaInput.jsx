@@ -5,27 +5,25 @@ export default function SchemaInput({ value, onChange }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="math-panel overflow-hidden transition-all duration-300 mb-2">
+    <div className="modern-card overflow-hidden mb-2">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 hover:bg-slate-100 transition-colors border-2 border-transparent hover:border-slate-300"
-        style={{ borderRadius: '255px 15px 225px 15px/15px 225px 15px 255px' }}
+        className="w-full flex items-center justify-between p-4 hover:bg-card/80 transition-colors"
       >
         <div className="flex items-center gap-2">
-          <span className="font-bold text-slate-800 handwritten text-xl">Schema</span>
-          <span className="text-xs px-2 py-0.5 rounded-full border border-blue-300 bg-blue-50 text-blue-600 font-bold font-mono ml-2 transform -rotate-2 shadow-[1px_1px_0px_0px_rgba(59,130,246,0.3)]">Optional</span>
+          <span className="font-display font-bold text-foreground text-lg">Schema</span>
+          <span className="text-[10px] px-2 py-0.5 rounded bg-muted text-muted-foreground font-mono uppercase tracking-wider ml-2">Optional</span>
         </div>
-        {isOpen ? <ChevronDown className="w-5 h-5 text-slate-600" /> : <ChevronRight className="w-5 h-5 text-slate-600" />}
+        {isOpen ? <ChevronDown className="w-5 h-5 text-muted-foreground" /> : <ChevronRight className="w-5 h-5 text-muted-foreground" />}
       </button>
       
       {isOpen && (
-        <div className="p-4 border-t-2 border-slate-700 bg-white/50">
+        <div className="p-4 border-t border-border bg-background/50">
           <textarea
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder="CREATE TABLE users (id INT PRIMARY KEY, email VARCHAR(255));"
-            className="w-full h-32 p-3 bg-white border-2 border-slate-700 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.05)] resize-y"
-            style={{ borderRadius: '10px 200px 10px 200px/200px 10px 200px 10px' }}
+            className="math-input h-32 resize-y"
             spellCheck="false"
           />
         </div>

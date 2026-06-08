@@ -5,7 +5,7 @@ import ExplainInput from '../components/analyzer/ExplainInput';
 import IndexesInput from '../components/analyzer/IndexesInput';
 import ResultsDashboard from '../components/results/ResultsDashboard';
 import { useAnalyze } from '../hooks/useAnalyze';
-import { Loader2, AlertCircle } from 'lucide-react';
+import { Loader2, AlertCircle, Database } from 'lucide-react';
 
 const OPTIMIZATION_QUOTES = [
   '"Premature optimization is the root of all evil." — Donald Knuth',
@@ -37,19 +37,16 @@ export default function Analyzer({ initialQuery = '' }) {
   };
 
   return (
-    <div className="flex-1 container mx-auto px-4 py-8 max-w-7xl">
-      <div className="grid lg:grid-cols-12 gap-8">
+    <div className="flex-1 container mx-auto px-4 py-8 max-w-[1400px]">
+      <div className="grid lg:grid-cols-10 gap-8 items-start">
         
-        {/* Input Column */}
-        <div className="lg:col-span-5 flex flex-col gap-6">
-          <div className="math-panel p-6 flex flex-col gap-6 relative">
-            {/* Hand-drawn decorative elements */}
-            <div className="absolute -top-3 -right-3 text-blue-500 font-bold font-mono text-xl rotate-12">∑</div>
-            <div className="absolute -bottom-2 -left-2 text-red-500 font-bold font-mono text-2xl -rotate-12">∫</div>
+        {/* Input Column (40%) */}
+        <div className="lg:col-span-4 flex flex-col gap-6 sticky top-20">
+          <div className="math-panel p-6 flex flex-col gap-6">
             
             <div>
-              <h2 className="text-3xl font-bold mb-1 handwritten text-slate-800">Query Analyzer</h2>
-              <p className="text-sm text-slate-600 font-mono">Paste your MySQL query below.</p>
+              <h2 className="text-2xl font-bold mb-1 text-foreground">Query Analyzer</h2>
+              <p className="text-sm text-muted-foreground">Paste your MySQL query below.</p>
             </div>
 
             <QueryInput value={query} onChange={setQuery} />
@@ -61,7 +58,7 @@ export default function Analyzer({ initialQuery = '' }) {
             </div>
 
             {error && (
-              <div className="p-4 bg-destructive/10 border border-destructive/20 text-destructive rounded-lg flex gap-3 text-sm">
+              <div className="p-4 bg-danger/10 border border-danger/20 text-danger rounded-lg flex gap-3 text-sm">
                 <AlertCircle className="w-5 h-5 shrink-0" />
                 <p>{error}</p>
               </div>
@@ -70,7 +67,7 @@ export default function Analyzer({ initialQuery = '' }) {
             <button
               onClick={handleAnalyze}
               disabled={!query.trim() || isLoading}
-              className="math-button w-full flex items-center justify-center gap-2 mt-4"
+              className="math-button w-full mt-2"
             >
               {isLoading ? (
                 <>
@@ -84,31 +81,28 @@ export default function Analyzer({ initialQuery = '' }) {
           </div>
         </div>
 
-        {/* Results Column */}
-        <div className="lg:col-span-7">
+        {/* Results Column (60%) */}
+        <div className="lg:col-span-6">
           {!data && !isLoading && (
-            <div className="h-full min-h-[400px] math-panel flex flex-col items-center justify-center text-center p-8 text-slate-500 border-dashed relative">
-              <div className="absolute top-4 right-8 text-slate-300 font-mono text-6xl rotate-12 opacity-50">π</div>
-              <div className="absolute bottom-10 left-10 text-slate-300 font-mono text-5xl -rotate-12 opacity-50">∆</div>
-              
-              <div className="w-16 h-16 rounded-full border-2 border-slate-400 border-dashed flex items-center justify-center mb-4">
-                <span className="font-mono text-2xl text-slate-400">?</span>
+            <div className="h-full min-h-[500px] modern-card flex flex-col items-center justify-center text-center p-8 text-muted-foreground border-dashed border-2 bg-transparent">
+              <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
+                <Database className="w-8 h-8 text-secondary-foreground" />
               </div>
-              <h3 className="text-2xl font-bold handwritten text-slate-700 mb-2">Ready to Analyze</h3>
-              <p className="text-sm max-w-sm font-mono leading-relaxed">
-                Enter a <span className="text-blue-500 font-bold">SELECT</span> query to see execution plan breakdowns, bottleneck detection, and AI optimization suggestions.
+              <h3 className="text-2xl font-bold text-foreground mb-2">Ready to Analyze</h3>
+              <p className="text-sm max-w-sm leading-relaxed">
+                Enter a <span className="text-primary font-semibold">SELECT</span> query to see execution plan breakdowns, bottleneck detection, and AI optimization suggestions.
               </p>
             </div>
           )}
 
           {isLoading && (
-            <div className="h-full min-h-[400px] math-panel flex flex-col items-center justify-center text-center p-8">
-              <Loader2 className="w-10 h-10 animate-spin text-blue-500 mb-4" />
-              <h3 className="text-2xl handwritten font-bold text-slate-800 animate-pulse mb-2">Running EXPLAIN & AI Analysis</h3>
-              <p className="text-sm text-slate-700 font-mono max-w-md mx-auto mt-4 mb-2 bg-yellow-100 p-2 border border-yellow-300 rounded transform -rotate-1">
+            <div className="h-full min-h-[500px] modern-card flex flex-col items-center justify-center text-center p-8 bg-card/50">
+              <Loader2 className="w-12 h-12 animate-spin text-primary mb-6" />
+              <h3 className="text-xl font-bold text-foreground animate-pulse mb-3">Running EXPLAIN & AI Analysis</h3>
+              <p className="text-sm text-primary font-mono max-w-md mx-auto mb-2 bg-primary/10 p-3 rounded-md border border-primary/20">
                 {loadingQuote}
               </p>
-              <p className="text-xs text-slate-500 mt-4 font-mono">This usually takes 3-5 seconds...</p>
+              <p className="text-xs text-muted-foreground mt-4 font-mono">This usually takes 3-5 seconds...</p>
             </div>
           )}
 

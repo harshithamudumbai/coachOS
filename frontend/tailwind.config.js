@@ -15,37 +15,34 @@ export default {
     },
     extend: {
       colors: {
-        border: '#262626',
-        input: '#262626',
-        ring: '#3b82f6',
-        background: '#0a0a0a',
-        foreground: '#fafafa',
+        border: '#1F2937',
+        input: '#1F2937',
+        ring: '#3B82F6',
+        background: '#0B0F17',
+        foreground: '#F9FAFB',
+        card: '#111827',
         primary: {
-          DEFAULT: '#3b82f6',
-          foreground: '#fafafa',
+          DEFAULT: '#3B82F6',
+          foreground: '#F9FAFB',
         },
         secondary: {
-          DEFAULT: '#111111',
-          foreground: '#a1a1aa',
-        },
-        destructive: {
-          DEFAULT: '#dc2626',
-          foreground: '#fafafa',
+          DEFAULT: '#F59E0B',
+          foreground: '#0B0F17',
         },
         muted: {
-          DEFAULT: '#161616',
-          foreground: '#a1a1aa',
+          DEFAULT: '#111827',
+          foreground: '#9CA3AF',
         },
         accent: {
-          DEFAULT: '#161616',
-          foreground: '#fafafa',
+          DEFAULT: '#1F2937',
+          foreground: '#F9FAFB',
         },
-        success: '#22c55e',
-        warning: '#eab308',
-        danger: '#ef4444',
-        critical: '#dc2626',
+        success: '#10B981',
+        warning: '#F59E0B',
+        danger: '#EF4444',
       },
       borderRadius: {
+        xl: '1rem',
         lg: '0.5rem',
         md: '0.375rem',
         sm: '0.25rem',
@@ -53,7 +50,11 @@ export default {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
+        display: ['Space Grotesk', 'sans-serif'],
       },
+      boxShadow: {
+        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.5)',
+      }
     },
   },
   plugins: [],

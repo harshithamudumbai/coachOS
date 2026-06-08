@@ -2,62 +2,86 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&display=swap');
-
 @layer base {
   :root {
-    color-scheme: light;
+    color-scheme: dark;
   }
   body {
-    background-color: #f8fafc;
+    background-color: #0B0F17;
     background-image: 
-      linear-gradient(#e2e8f0 1px, transparent 1px),
-      linear-gradient(90deg, #e2e8f0 1px, transparent 1px);
-    background-size: 20px 20px;
+      linear-gradient(rgba(31, 41, 55, 0.4) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(31, 41, 55, 0.4) 1px, transparent 1px);
+    background-size: 32px 32px;
     background-position: -1px -1px;
-    @apply text-slate-800 antialiased selection:bg-yellow-200 selection:text-slate-900;
-    font-family: 'JetBrains Mono', monospace;
+    @apply text-foreground antialiased selection:bg-blue-500/30 selection:text-blue-200;
+    font-family: 'Inter', sans-serif;
   }
-  h1, h2, h3, h4, h5, h6, .handwritten {
-    font-family: 'Caveat', cursive;
-    letter-spacing: 1px;
+  
+  /* Reset some default margins for better rhythm */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: -0.02em;
+    @apply text-foreground font-bold;
   }
 }
 
 @layer utilities {
-  .math-panel {
-    @apply bg-white/90 backdrop-blur-sm border-2 border-slate-700 shadow-[4px_4px_0px_0px_rgba(51,65,85,1)] transition-all;
-    border-radius: 2px 255px 3px 25px / 255px 5px 225px 3px;
+  /* Modern Dark Cards */
+  .modern-card {
+    @apply bg-card border border-border shadow-soft rounded-xl transition-all duration-200;
   }
   
-  .math-panel:hover {
-    @apply shadow-[6px_6px_0px_0px_rgba(51,65,85,1)] -translate-y-0.5;
+  .modern-card-hover:hover {
+    @apply border-slate-600 shadow-xl -translate-y-0.5;
+  }
+
+  /* Math/Retro Accents */
+  .math-panel {
+    @apply bg-card/90 backdrop-blur-sm border border-border rounded-xl shadow-soft relative overflow-hidden;
+  }
+  
+  .math-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #3B82F6, #F59E0B);
+    opacity: 0.8;
   }
 
   .math-button {
-    @apply bg-blue-500 text-white border-2 border-slate-800 font-bold px-6 py-2 shadow-[3px_3px_0px_0px_rgba(30,41,59,1)] transition-all;
-    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-    font-family: 'Caveat', cursive;
-    font-size: 1.25rem;
+    @apply bg-primary hover:bg-blue-600 text-white font-medium px-6 py-2 rounded-lg shadow-soft transition-all duration-200 flex items-center justify-center gap-2;
+    font-family: 'Inter', sans-serif;
   }
 
-  .math-button:hover:not(:disabled) {
-    @apply bg-blue-600 shadow-[5px_5px_0px_0px_rgba(30,41,59,1)] -translate-y-0.5;
+  .math-button:active {
+    @apply scale-95;
   }
 
   .math-button:disabled {
-    @apply opacity-50 cursor-not-allowed shadow-[1px_1px_0px_0px_rgba(30,41,59,1)] translate-y-0.5;
+    @apply opacity-50 cursor-not-allowed transform-none;
   }
 
   .math-input {
-    @apply w-full bg-slate-50 border-2 border-slate-700 p-3 shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.05)] focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500;
-    border-radius: 10px 200px 10px 200px/200px 10px 200px 10px;
+    @apply w-full bg-[#0B0F17] border border-border p-4 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all shadow-inner;
     font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+  }
+
+  /* Status Indicators */
+  .badge-success {
+    @apply bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20 px-2.5 py-0.5 rounded-full text-xs font-semibold;
+  }
+  
+  .badge-warning {
+    @apply bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20 px-2.5 py-0.5 rounded-full text-xs font-semibold;
+  }
+  
+  .badge-danger {
+    @apply bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/20 px-2.5 py-0.5 rounded-full text-xs font-semibold;
   }
 
   .highlighter {
-    background: linear-gradient(104deg, transparent 0%, transparent 5%, rgba(253, 224, 71, 0.8) 5%, rgba(253, 224, 71, 0.8) 95%, transparent 95%, transparent 100%);
-    display: inline;
-    padding: 0 4px;
+    @apply bg-primary/20 text-blue-200 px-1 rounded;
   }
 }

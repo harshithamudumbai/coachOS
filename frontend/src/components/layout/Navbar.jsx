@@ -1,51 +1,56 @@
 import React from 'react';
-import { Database, BarChart3, History, ChevronDown } from 'lucide-react';
+import { Database, BarChart3, History, Activity } from 'lucide-react';
 
 export default function Navbar({ currentPage, onNavigate }) {
   return (
-    <nav className="border-b-4 border-slate-800 bg-white/90 backdrop-blur sticky top-0 z-50">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+    <nav className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+      <div className="container mx-auto px-4 h-14 flex items-center justify-between">
         
-        {/* Logo */}
+        {/* Logo Left */}
         <div 
-          className="flex items-center gap-2 cursor-pointer transform -rotate-2 hover:rotate-0 transition-transform"
+          className="flex items-center gap-2 cursor-pointer group"
           onClick={() => onNavigate('home')}
         >
-          <div className="w-10 h-10 rounded-full border-2 border-slate-800 bg-yellow-200 flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(30,41,59,1)]">
-            <span className="font-bold text-2xl font-mono text-slate-800">∑</span>
+          <div className="w-8 h-8 rounded-md bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+            <Database className="w-4 h-4 text-primary" />
           </div>
-          <span className="font-bold text-3xl tracking-tight handwritten text-slate-800 underline decoration-wavy decoration-blue-500">Dr.Query</span>
+          <span className="font-display font-bold text-xl tracking-tight text-foreground">
+            Dr.Query
+          </span>
         </div>
 
-        {/* Center Links */}
-        <div className="hidden md:flex items-center gap-6 text-xl handwritten font-bold text-slate-600">
+        {/* Navigation Center */}
+        <div className="hidden md:flex items-center gap-6">
           <button 
             onClick={() => onNavigate('home')}
-            className={`hover:text-blue-600 hover:-translate-y-0.5 transition-all ${currentPage === 'home' ? 'text-blue-600 underline decoration-4 decoration-yellow-400' : ''}`}
+            className={`text-sm font-medium transition-colors hover:text-foreground ${currentPage === 'home' ? 'text-foreground' : 'text-muted-foreground'}`}
           >
             Home
           </button>
           <button 
             onClick={() => onNavigate('analyzer')}
-            className={`flex items-center gap-1 hover:text-blue-600 hover:-translate-y-0.5 transition-all ${currentPage === 'analyzer' ? 'text-blue-600 underline decoration-4 decoration-yellow-400' : ''}`}
+            className={`flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground ${currentPage === 'analyzer' ? 'text-foreground' : 'text-muted-foreground'}`}
           >
-            <BarChart3 className="w-5 h-5" />
+            <BarChart3 className="w-4 h-4" />
             Analyzer
           </button>
           <button 
             onClick={() => onNavigate('history')}
-            className={`flex items-center gap-1 hover:text-blue-600 hover:-translate-y-0.5 transition-all ${currentPage === 'history' ? 'text-blue-600 underline decoration-4 decoration-yellow-400' : ''}`}
+            className={`flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground ${currentPage === 'history' ? 'text-foreground' : 'text-muted-foreground'}`}
           >
-            <History className="w-5 h-5" />
-            Notes History
+            <History className="w-4 h-4" />
+            History
           </button>
         </div>
 
-        {/* Right Badge */}
+        {/* Status Right */}
         <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-white border-2 border-slate-800 text-slate-800 text-xs font-bold font-mono shadow-[2px_2px_0px_0px_rgba(30,41,59,1)] transform rotate-2">
-            <div className="w-3 h-3 border-2 border-slate-800 rounded-full bg-green-400"></div>
-            MySQL=Ready
+          <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-md bg-card border border-border text-xs font-mono text-muted-foreground">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
+            </span>
+            Engine Online
           </div>
         </div>
 
