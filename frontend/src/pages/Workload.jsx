@@ -34,7 +34,7 @@ export default function Workload() {
     formData.append('slowLog', file);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/workload/analyze`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/workload/analyze`, {
         method: 'POST',
         body: formData,
       });

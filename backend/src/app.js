@@ -23,8 +23,11 @@ app.use(express.json({ limit: '50kb' }));
 app.use(requestLogger);
 
 // Routes
+const workloadRoutes = require('./routes/workloadRoutes');
+
 app.use('/analyze', analyzeRoutes);
 app.use('/history', historyRoutes);
+app.use('/workload', workloadRoutes);
 
 // Health check
 app.get('/health', (req, res) => res.json({ status: 'ok' }));

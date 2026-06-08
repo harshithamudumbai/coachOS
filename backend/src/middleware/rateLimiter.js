@@ -14,4 +14,10 @@ const historyLimiter = rateLimit({
   message: { error: 'Too many requests.' }
 });
 
-module.exports = { analyzeLimiter, historyLimiter };
+const workloadLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 5,
+  message: { error: 'Too many log uploads. Please wait a moment.' }
+});
+
+module.exports = { analyzeLimiter, historyLimiter, workloadLimiter };
