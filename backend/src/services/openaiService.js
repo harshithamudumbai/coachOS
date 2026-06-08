@@ -1,79 +1,29 @@
 const Groq = require('groq-sdk');
 
-async function analyzeWithAI({ query, schema, indexes, explainOutput, parsedExplain }) {
+async function analyzeWithAI({ query, schema, indexes, explainOutput, parsedExplain, engineResults }) {
   if (!process.env.GROQ_API_KEY) {
     throw new Error("GROQ_API_KEY is not configured in .env");
   }
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
   const systemPrompt = `You are Dr.Query, a Principal Database Performance Engineer with 15+ years of experience in MySQL optimization, query tuning, indexing strategies, database architecture, and production troubleshooting.
 
-Your job is NOT to simply explain the query.
+Your job is to format the findings of our Deterministic SQL Analysis Engine into a human-friendly DBA report.
+You must NOT invent new issues. You must NOT alter the health score.
+You analyze the Deterministic Report and return ONLY valid JSON. No markdown, no backticks, no explanations outside JSON.`;
 
-Your primary responsibility is to identify performance bottlenecks, estimate their impact, determine root causes, and provide practical optimization recommendations that can be applied in production environments.
-
-You analyze SQL queries and return ONLY valid JSON. No markdown, no backticks, no explanations outside JSON.`;
-
-  const userPrompt = `Analyze the following inputs:
+  const userPrompt = `Analyze the following inputs and format the Deterministic Engine Report into the requested JSON schema.
 
 1. SQL Query
 2. Table Schema
 3. Index Information
 4. EXPLAIN Output
-5. EXPLAIN ANALYZE Output (if available)
-6. Slow Query Log Information (if available)
-
-Perform the analysis exactly like a senior database architect conducting a production performance review.
+5. Deterministic Engine Report (MUST USE)
 
 Rules:
-* Never provide generic advice.
-* Every recommendation must reference evidence from the query, schema, indexes, or execution plan.
-* Quantify impact whenever possible.
-* Prioritize recommendations from highest impact to lowest impact.
-* Identify both immediate fixes and long-term architectural improvements.
-* Think critically before recommending indexes.
-* Avoid recommending redundant indexes.
-* Consider write overhead caused by additional indexes.
-* Detect anti-patterns automatically.
-
-Check for:
-1. Full Table Scans
-2. Index Misses
-3. Missing Composite Indexes
-4. Temporary Tables
-5. Filesorts
-6. Large Row Examinations
-7. SELECT *
-8. Excessive JOIN Complexity
-9. Subquery Inefficiencies
-10. Correlated Subqueries
-11. Large IN Clauses
-12. OR Condition Performance Problems
-13. Function Usage Preventing Index Access
-14. Data Type Mismatches
-15. Potential N+1 Query Patterns
-16. Over-Fetching
-17. Duplicate Conditions
-18. Pagination Issues
-19. Covering Index Opportunities
-20. Partitioning Opportunities
-
-Special Cases:
-If query contains hundreds or thousands of IDs in an IN() clause:
-* Recommend temporary table strategy.
-* Explain expected performance gains.
-
-If query performs filesort:
-* Explain why.
-* Recommend index changes if appropriate.
-
-If query uses SELECT *:
-* Recommend explicit column selection.
-
-If query scans a large percentage of a table:
-* Explain why indexes are not being used.
-
-If execution plan indicates poor cardinality:
-* Mention statistics refresh possibilities.
+* You MUST map every issue found in the "Deterministic Engine Report" into the "optimizationRecommendations" array.
+* Do NOT hallucinate new bottlenecks that the engine did not find.
+* Provide exact SQL implementations for the engine's recommendations.
+* Keep the exact healthScore and severity provided by the engine.
 
 QUERY:
 ${query}
@@ -84,39 +34,33 @@ ${indexes ? `INDEXES:\n${indexes}` : 'No indexes provided.'}
 
 ${explainOutput ? `EXPLAIN OUTPUT:\n${typeof explainOutput === 'string' ? explainOutput : JSON.stringify(explainOutput, null, 2)}` : 'EXPLAIN not available (analyze from query structure).'}
 
-${parsedExplain ? `PARSED STATS:\n${JSON.stringify(parsedExplain, null, 2)}` : ''}
+DETERMINISTIC ENGINE REPORT:
+${JSON.stringify(engineResults, null, 2)}
 
 Generate output in exactly this JSON format:
 {
-  "healthScore": 0,
-  "severity": "Low | Medium | High | Critical",
-  "summary": "",
-  "rootCauses": [],
-  "performanceRisks": [],
+  "healthScore": ${engineResults?.healthScore || 0},
+  "severity": "${engineResults?.severity || 'Unknown'}",
+  "summary": "<2-3 sentence overview of the engine report>",
+  "rootCauses": ["<list of strings explaining the root causes of the engine's findings>"],
+  "performanceRisks": ["<list of strings detailing risks>"],
   "optimizationRecommendations": [
     {
       "priority": 1,
-      "title": "",
-      "reason": "",
-      "expectedImpact": "",
-      "implementation": ""
+      "title": "<e.g. Remove SELECT *>",
+      "reason": "<why it's bad based on the engine report>",
+      "expectedImpact": "<expected impact based on the engine report>",
+      "implementation": "<exact SQL snippet to fix it>"
     }
   ],
-  "indexRecommendations": [],
-  "queryRewriteSuggestions": [],
-  "architectNotes": [],
-  "productionReadiness": "",
-  "nextSteps": []
+  "indexRecommendations": ["<SQL for CREATE INDEX if applicable, else empty array>"],
+  "queryRewriteSuggestions": ["<Fully rewritten SQL query if applicable, else empty array>"],
+  "architectNotes": ["<Senior DBA thoughts on the architecture>"],
+  "productionReadiness": "<Pass | Warning | Fail - explain why>",
+  "nextSteps": ["<Specific next actions>"]
 }
 
-Scoring Guidelines:
-90-100 = Excellent
-75-89 = Good
-50-74 = Needs Optimization
-25-49 = Poor
-0-24 = Critical
-
-Do not hallucinate. If evidence is insufficient, explicitly state the limitation. Think like a production DBA responsible for reducing latency, lowering database load, and improving scalability.`;
+Do not hallucinate. Think like a production DBA formatting a static analysis report.`;
 
   try {
     const response = await groq.chat.completions.create({

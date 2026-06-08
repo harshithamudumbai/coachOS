@@ -10,11 +10,16 @@ function parseExplainOutput(explainJson) {
       tables: [],
       fullTableScans: 0,
       totalRowsExamined: 0,
-      missingIndexHints: []
+      missingIndexHints: [],
+      usingFilesort: false,
+      usingTemporaryTable: false
     };
 
     function traverseNode(node) {
       if (!node) return;
+
+      if (node.using_filesort) result.usingFilesort = true;
+      if (node.using_temporary_table) result.usingTemporaryTable = true;
 
       if (node.table_name) {
         const tableInfo = {
@@ -38,6 +43,7 @@ function parseExplainOutput(explainJson) {
       if (node.nested_loop) node.nested_loop.forEach(n => traverseNode(n.table));
       if (node.grouping_operation) traverseNode(node.grouping_operation);
       if (node.ordering_operation) traverseNode(node.ordering_operation);
+      if (node.table) traverseNode(node.table);
     }
 
     traverseNode(plan?.query_block);

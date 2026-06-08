@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const { runExplain } = require('../services/mysqlService');
 const { parseExplainOutput } = require('../services/explainParser');
 const { analyzeWithAI } = require('../services/openaiService');
+const { runDeterministicAnalysis } = require('../services/analysisEngine');
 const { pool } = require('../db/connection');
 
 async function analyze(req, res, next) {
@@ -21,8 +22,15 @@ async function analyze(req, res, next) {
       parsedExplain = parseExplainOutput(explainOutput);
     }
 
-    // AI analysis
-    const analysis = await analyzeWithAI({ query, schema, indexes, explainOutput, parsedExplain });
+    // Deterministic Analysis First
+    const engineResults = runDeterministicAnalysis({ query, parsedExplain });
+
+    // AI formatting
+    const analysis = await analyzeWithAI({ query, schema, indexes, explainOutput, parsedExplain, engineResults });
+
+    // Overwrite AI score/severity with deterministic values to prevent hallucination
+    analysis.healthScore = engineResults.healthScore;
+    analysis.severity = engineResults.severity;
 
     // Save to history (hash IP for basic privacy)
     const ipHash = crypto
