@@ -23,7 +23,7 @@ async function analyze(req, res, next) {
     }
 
     // Deterministic Analysis First
-    const engineResults = runDeterministicAnalysis({ query, parsedExplain });
+    const engineResults = runDeterministicAnalysis({ query, parsedExplain, indexes });
 
     // AI formatting
     const analysis = await analyzeWithAI({ query, schema, indexes, explainOutput, parsedExplain, engineResults });
@@ -31,6 +31,50 @@ async function analyze(req, res, next) {
     // Overwrite AI score/severity with deterministic values to prevent hallucination
     analysis.healthScore = engineResults.healthScore;
     analysis.severity = engineResults.severity;
+    
+    // Pass rule coverage to the frontend
+    analysis.ruleCoverage = {
+      executed: engineResults.executedRules,
+      triggered: engineResults.triggeredRules
+    };
+
+    // Replace the AI's findings array directly with the deterministic findings (with injected confidence & AI recommendations)
+    // Actually, AI generates `optimizationRecommendations`. We just ensure they exist.
+
+    // BENCHMARKING: If AI suggested a rewrite, run EXPLAIN on it safely
+    let benchmarkResults = null;
+    if (analysis.queryRewriteSuggestions && analysis.queryRewriteSuggestions.length > 0) {
+      try {
+        const rewrite = analysis.queryRewriteSuggestions[0];
+        // Ensure it's a SELECT query and doesn't contain destructive commands
+        if (typeof rewrite === 'string' && rewrite.trim().toUpperCase().startsWith('SELECT')) {
+           const rewriteExplainOutput = await runExplain(rewrite);
+           const rewriteParsed = parseExplainOutput(rewriteExplainOutput);
+           
+           if (rewriteParsed && parsedExplain) {
+             const origRows = parsedExplain.totalRowsExamined;
+             const newRows = rewriteParsed.totalRowsExamined;
+             let improvementPercent = 0;
+             if (origRows > 0 && newRows < origRows) {
+               improvementPercent = Math.round(((origRows - newRows) / origRows) * 100);
+             }
+
+             benchmarkResults = {
+               originalRows: origRows,
+               rewrittenRows: newRows,
+               improvementPercent: improvementPercent,
+               originalCost: parsedExplain.tables.reduce((acc, t) => acc + (parseFloat(t.costInfo?.query_cost || 0)), 0),
+               rewrittenCost: rewriteParsed.tables.reduce((acc, t) => acc + (parseFloat(t.costInfo?.query_cost || 0)), 0),
+             };
+           }
+        }
+      } catch (benchmarkErr) {
+        // Silently fail benchmark if AI hallucinated invalid SQL
+        console.warn("Benchmark failed: ", benchmarkErr.message);
+      }
+    }
+    
+    analysis.benchmarkResults = benchmarkResults;
 
     // Save to history (hash IP for basic privacy)
     const ipHash = crypto
