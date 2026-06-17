@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  body {
+    background-color: #121212;
+    background-image: 
+      linear-gradient(#1A1A1A 1px, transparent 1px),
+      linear-gradient(90deg, #1A1A1A 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: -1px -1px;
+    @apply text-foreground antialiased selection:bg-primary/30 selection:text-primary;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  /* Academic Headings */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'IBM Plex Serif', serif;
+    letter-spacing: -0.01em;
+    @apply text-foreground font-bold;
+  }
+}
+
+@layer utilities {
+  /* Flat UI Cards */
+  .modern-card {
+    background-color: #1A1A1A;
+    border: 1px solid #333333;
+    @apply rounded-none transition-all duration-200;
+  }
+  
+  .modern-card-hover:hover {
+    border-color: #F5B041;
+  }
+
+  /* Notebook Panels */
+  .math-panel {
+    background-color: #1A1A1A;
+    border: 1px solid #333333;
+    @apply rounded-none relative overflow-hidden;
+  }
+
+  .math-button {
+    @apply bg-primary hover:bg-[#D4AC0D] text-[#121212] font-semibold px-6 py-2 rounded-none transition-all duration-200 flex items-center justify-center gap-2 border border-transparent hover:border-[#121212];
+    font-family: 'IBM Plex Serif', serif;
+  }
+
+  .math-button:active {
+    @apply scale-[0.98];
+  }
+
+  .math-button:disabled {
+    @apply opacity-50 cursor-not-allowed transform-none;
+  }
+
+  .math-input {
+    @apply w-full bg-[#121212] border border-[#333333] p-4 rounded-none text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+  }
+
+  /* Status Indicators */
+  .badge-success {
+    @apply bg-[#2ECC71]/10 text-[#2ECC71] border border-[#2ECC71]/30 px-2.5 py-0.5 rounded-none text-xs font-mono tracking-wider font-bold uppercase;
+  }
+  
+  .badge-warning {
+    @apply bg-[#F5B041]/10 text-[#F5B041] border border-[#F5B041]/30 px-2.5 py-0.5 rounded-none text-xs font-mono tracking-wider font-bold uppercase;
+  }
+  
+  .badge-danger {
+    @apply bg-[#E74C3C]/10 text-[#E74C3C] border border-[#E74C3C]/30 px-2.5 py-0.5 rounded-none text-xs font-mono tracking-wider font-bold uppercase;
+  }
+
+  .highlighter {
+    @apply bg-primary/20 text-primary px-1 rounded-none font-mono;
+  }
+}
