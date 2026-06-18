@@ -8,7 +8,7 @@ const validateAnalyze = [
   body('query')
     .trim()
     .notEmpty().withMessage('Query is required')
-    .isLength({ max: 10000 }).withMessage('Query too long (max 10,000 chars)')
+    .isLength({ max: 1000000 }).withMessage('Query too long (max 1,000,000 chars)')
     .custom((val) => {
       // Block dangerous statements
       const banned = /\b(DROP|DELETE|TRUNCATE|INSERT|UPDATE|ALTER|CREATE|GRANT|REVOKE|EXEC|EXECUTE|xp_|sp_)\b/i;
@@ -18,15 +18,15 @@ const validateAnalyze = [
   body('schema')
     .optional()
     .trim()
-    .isLength({ max: 20000 }).withMessage('Schema too long (max 20,000 chars)'),
+    .isLength({ max: 1000000 }).withMessage('Schema too long (max 1,000,000 chars)'),
   body('indexes')
     .optional()
     .trim()
-    .isLength({ max: 10000 }).withMessage('Indexes too long (max 10,000 chars)'),
+    .isLength({ max: 500000 }).withMessage('Indexes too long (max 500,000 chars)'),
   body('pastedExplain')
     .optional()
     .trim()
-    .isLength({ max: 50000 }).withMessage('Pasted EXPLAIN too long (max 50,000 chars)'),
+    .isLength({ max: 2000000 }).withMessage('Pasted EXPLAIN too long (max 2,000,000 chars)'),
   handleValidationErrors,
 ];
 

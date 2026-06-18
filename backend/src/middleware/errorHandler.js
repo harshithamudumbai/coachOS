@@ -13,10 +13,9 @@ const errorHandler = (err, req, res, next) => {
 
   const statusCode = err.status || 500;
 
-  // In production: NEVER expose error details, stack traces, or internal paths
-  // In development: show the error message for debugging
+  // In production: only mask server errors (500+). Allow client errors (4xx) to show their message.
   res.status(statusCode).json({
-    error: process.env.NODE_ENV === 'production'
+    error: process.env.NODE_ENV === 'production' && statusCode >= 500
       ? 'Internal server error'
       : err.message,
     requestId: req.id, // Always include for support/debugging correlation

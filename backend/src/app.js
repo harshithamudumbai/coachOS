@@ -98,7 +98,7 @@ app.use(globalLimiter);
 // -------------------------------------------------------------------
 // Body parsing with size limits
 // -------------------------------------------------------------------
-app.use(express.json({ limit: '50kb' }));
+app.use(express.json({ limit: '2mb' }));
 
 // -------------------------------------------------------------------
 // Input Sanitization — strip XSS vectors from all inputs
