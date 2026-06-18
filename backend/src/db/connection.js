@@ -16,7 +16,7 @@ const pool = mysql.createPool({
   connectTimeout: 10000,    // 10 seconds to establish connection
   // SSL configuration — secure in production
   ssl: process.env.DB_SSL === 'true'
-    ? { rejectUnauthorized: isProduction } // Enforce cert validation in production
+    ? { rejectUnauthorized: false } // Aiven uses self-signed certificates by default
     : false,
 });
 
