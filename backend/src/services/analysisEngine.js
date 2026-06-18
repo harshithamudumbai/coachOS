@@ -12,7 +12,35 @@ function parseIndexes(indexesStr) {
   return indexes;
 }
 
-const ENGINE_VERSION = "1.0";
+function extractFilterClauses(queryText) {
+  const q = queryText.toLowerCase();
+  let filters = '';
+  
+  // Extract WHERE clause
+  const whereIndex = q.indexOf('where');
+  if (whereIndex !== -1) {
+    let whereClause = q.substring(whereIndex + 5);
+    const stopKeywords = ['group by', 'order by', 'limit', 'union'];
+    let minStop = whereClause.length;
+    for (const kw of stopKeywords) {
+      const idx = whereClause.indexOf(kw);
+      if (idx !== -1 && idx < minStop) {
+        minStop = idx;
+      }
+    }
+    filters += ' ' + whereClause.substring(0, minStop);
+  }
+  
+  // Extract ON clauses
+  const onMatches = q.match(/\bon\s+([\s\S]+?)(?=\bjoin\b|\bwhere\b|\bgroup\b|\border\b|\blimit\b|\bunion\b|$)/g);
+  if (onMatches) {
+    filters += ' ' + onMatches.join(' ');
+  }
+  
+  return filters;
+}
+
+const ENGINE_VERSION = "1.1";
 
 const RULE_REGISTRY = {
   SELECT_STAR: { category: "Query Anti-Pattern", severity: "Low", confidence: 100 },
@@ -25,7 +53,10 @@ const RULE_REGISTRY = {
   FUNCTION_ON_INDEXED_COLUMN: { category: "Query Anti-Pattern", severity: "High", confidence: 85 },
   OR_CONDITION_EXPLOSION: { category: "Query Anti-Pattern", severity: "Medium", confidence: 80 },
   PAGINATION_RISK: { category: "Architecture", severity: "Medium", confidence: 95 },
-  INDEX_REDUNDANCY: { category: "Indexing Strategy", severity: "Medium", confidence: 100 }
+  INDEX_REDUNDANCY: { category: "Indexing Strategy", severity: "Medium", confidence: 100 },
+  IMPLICIT_JOIN: { category: "Query Anti-Pattern", severity: "Medium", confidence: 95 },
+  FIND_IN_SET: { category: "Query Anti-Pattern", severity: "High", confidence: 100 },
+  EXPLAIN_UNAVAILABLE: { category: "Execution Plan", severity: "Low", confidence: 100 }
 };
 
 function runDeterministicAnalysis({ query, parsedExplain, indexes }) {
@@ -97,10 +128,11 @@ function runDeterministicAnalysis({ query, parsedExplain, indexes }) {
     score -= 15;
   }
 
-  // 8. Function on Indexed Column
-  const funcMatch = q.match(/where\s+([\w]+)\([\w]+\)\s*[=<>]/i);
+  // 8. Function on Indexed Column (anywhere in WHERE or ON filters)
+  const filtersText = extractFilterClauses(query);
+  const funcMatch = filtersText.match(/\b(date|year|month|day|hour|minute|second|upper|lower|concat|coalesce|ifnull|abs|round|floor|ceiling)\s*\(\s*[\w.`"]+\s*\)\s*(?:[=<>!]|like|in\b|is\b)/);
   if (funcMatch) {
-    triggerRule('FUNCTION_ON_INDEXED_COLUMN', 'Index becomes unusable', 'Rewrite predicate to avoid functions on columns', `Detected function ${funcMatch[1]}() in WHERE clause`);
+    triggerRule('FUNCTION_ON_INDEXED_COLUMN', 'Index becomes unusable because the database must evaluate the function on every row', 'Rewrite predicate to avoid functions on columns (e.g. use date ranges instead of wrapping columns in DATE())', `Detected function ${funcMatch[1]}() in filters/joins`);
     score -= 15;
   }
 
@@ -141,6 +173,23 @@ function runDeterministicAnalysis({ query, parsedExplain, indexes }) {
         }
       }
     }
+  }
+
+  // 12. Implicit Comma Join
+  if (q.match(/\bfrom\s+[\w.`"()]+\s*(?:\s+\w+)?\s*,\s*[\w.`"()]+/)) {
+    triggerRule('IMPLICIT_JOIN', 'Implicit comma joins can lead to unintentional Cartesian products and make queries harder to optimize/maintain', 'Use explicit JOIN syntax (e.g., INNER JOIN, LEFT JOIN)', 'Query contains comma-separated tables in the FROM clause');
+    score -= 10;
+  }
+
+  // 13. FIND_IN_SET
+  if (q.includes('find_in_set')) {
+    triggerRule('FIND_IN_SET', 'FIND_IN_SET forces a full table scan because it cannot utilize indexes to locate items', 'Normalize your database schema (create a junction table for many-to-many relationships) instead of storing comma-separated values in a single column', 'Query uses FIND_IN_SET() function');
+    score -= 20;
+  }
+
+  // 14. EXPLAIN Unavailable Warning (limited analysis)
+  if (!parsedExplain) {
+    triggerRule('EXPLAIN_UNAVAILABLE', 'Detailed execution plan checks (like Full Table Scan, Filesort, Temporary Table) were skipped because the query failed to EXPLAIN on the MySQL instance (likely due to missing tables in the database)', 'Create the required tables/schema in your MySQL instance to unlock full query plan optimization analysis', 'No execution plan was available for analysis (static rules fallback)');
   }
 
   if (score < 0) score = 0;

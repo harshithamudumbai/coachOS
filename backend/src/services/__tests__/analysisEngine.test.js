@@ -51,9 +51,19 @@ describe('Deterministic Analysis Engine', () => {
     expect(result.severity).toBe('Excellent');
   });
 
+  it('detects IMPLICIT_JOIN', () => {
+    const result = runDeterministicAnalysis({ query: 'SELECT * FROM users u, profiles p WHERE u.id = p.user_id' });
+    expect(result.triggeredRules).toContain('IMPLICIT_JOIN');
+  });
+
+  it('detects FIND_IN_SET', () => {
+    const result = runDeterministicAnalysis({ query: 'SELECT * FROM users WHERE FIND_IN_SET(1, option_ids)' });
+    expect(result.triggeredRules).toContain('FIND_IN_SET');
+  });
+
   it('returns engine version metadata', () => {
     const result = runDeterministicAnalysis({ query: 'SELECT id FROM users' });
-    expect(result.engineVersion).toBe("1.0");
+    expect(result.engineVersion).toBe("1.1");
     expect(result.executedRules.length).toBeGreaterThan(10);
   });
 });
