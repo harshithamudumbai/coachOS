@@ -1,11 +1,26 @@
 const Groq = require('groq-sdk');
 const { logger } = require('../lib/logger');
 
+function collapseQueryForAI(sql) {
+  if (typeof sql !== 'string') return sql;
+  
+  // Collapse IN (...) clauses with many values
+  return sql.replace(/\bin\s*\(\s*([^)]+)\s*\)/ig, (match, content) => {
+    const values = content.split(',');
+    if (values.length > 5) {
+      const firstFew = values.slice(0, 5).map(v => v.trim()).join(', ');
+      return `IN (${firstFew}, ... [truncated ${values.length - 5} values])`;
+    }
+    return match;
+  });
+}
+
 async function analyzeWithAI({ query, schema, indexes, explainOutput, parsedExplain, engineResults }) {
   if (!process.env.GROQ_API_KEY) {
     throw new Error("GROQ_API_KEY is not configured in .env");
   }
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+  const collapsedQuery = collapseQueryForAI(query);
   const systemPrompt = `You are Dr.Query, a Principal Database Performance Engineer with 15+ years of experience in MySQL optimization, query tuning, indexing strategies, database architecture, and production troubleshooting.
 
 Your job is to format the findings of our Deterministic SQL Analysis Engine into a human-friendly DBA report.
@@ -28,7 +43,7 @@ Rules:
 * Keep the exact healthScore and severity provided by the engine.
 
 QUERY:
-${query}
+${collapsedQuery}
 
 ${schema ? `SCHEMA:\n${schema}` : 'No schema provided.'}
 
