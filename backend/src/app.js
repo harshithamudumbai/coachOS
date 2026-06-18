@@ -119,6 +119,16 @@ app.use('/analyze', analyzeRoutes);
 app.use('/history', historyRoutes);
 app.use('/workload', workloadRoutes);
 
+// Welcome / Status check at root
+app.get('/', (req, res) => {
+  res.json({
+    service: 'Dr.Query Backend API',
+    status: 'online',
+    version: '1.0.0',
+    documentation: 'https://github.com/harshithamudumbai/coachOS'
+  });
+});
+
 // Health check
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
