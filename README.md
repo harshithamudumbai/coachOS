@@ -26,6 +26,13 @@ Dr.Query intercepts the raw `EXPLAIN FORMAT=JSON` output directly from MySQL. Th
 
 If it detects an anti-pattern (like a function on an indexed column), it triggers a hardcoded rule. The engine then uses LLaMA 3.3 to format these strict findings into human-readable recommendations, automatically executing any suggested rewrites to validate their cost improvements.
 
+## 🌐 Deployed Environment
+
+The production environment is deployed at:
+- **Frontend (Vercel):** [https://frontend-rho-sage-71.vercel.app](https://frontend-rho-sage-71.vercel.app)
+- **Backend (Render):** [https://coachoscoachos-backend.onrender.com](https://coachoscoachos-backend.onrender.com)
+- **Database:** Managed MySQL instance on Aiven
+
 ## 🚀 Quick Start
 
 The fastest way to evaluate Dr.Query is using our pre-configured Docker environment, which automatically spins up the frontend, backend, and a MySQL instance loaded with the **Sakila sample database**.
@@ -41,9 +48,21 @@ docker compose up -d --build
 *The app will be instantly available at `http://localhost:5173`.*
 
 **Running locally without Docker:**
-1. Configure your `.env` with `GROQ_API_KEY`, `DB_HOST`, `DB_USER`, `DB_PASS`, `DB_NAME`.
-2. Start the backend: `cd backend && npm start`
-3. Start the frontend: `cd frontend && npm run dev`
+1. Configure your `.env` in the `backend/` directory with `GROQ_API_KEY`, `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `DB_PORT`, and `DB_SSL`.
+2. Initialize the database schema:
+   ```bash
+   cd backend
+   node scripts/create-table.js
+   ```
+3. Start the backend:
+   ```bash
+   npm run dev
+   ```
+4. Start the frontend:
+   ```bash
+   cd ../frontend
+   npm run dev
+   ```
 
 ## 📊 Example Usage & Benchmarks
 
