@@ -21,6 +21,9 @@ async function analyzeWithAI({ query, schema, indexes, explainOutput, parsedExpl
   }
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
   const collapsedQuery = collapseQueryForAI(query);
+  const collapsedExplain = explainOutput
+    ? (typeof explainOutput === 'string' ? collapseQueryForAI(explainOutput) : collapseQueryForAI(JSON.stringify(explainOutput, null, 2)))
+    : null;
   const systemPrompt = `You are Dr.Query, a Principal Database Performance Engineer with 15+ years of experience in MySQL optimization, query tuning, indexing strategies, database architecture, and production troubleshooting.
 
 Your job is to format the findings of our Deterministic SQL Analysis Engine into a human-friendly DBA report.
@@ -49,7 +52,7 @@ ${schema ? `SCHEMA:\n${schema}` : 'No schema provided.'}
 
 ${indexes ? `INDEXES:\n${indexes}` : 'No indexes provided.'}
 
-${explainOutput ? `EXPLAIN OUTPUT:\n${typeof explainOutput === 'string' ? explainOutput : JSON.stringify(explainOutput, null, 2)}` : 'EXPLAIN not available (analyze from query structure).'}
+${collapsedExplain ? `EXPLAIN OUTPUT:\n${collapsedExplain}` : 'EXPLAIN not available (analyze from query structure).'}`,StartLine:23,TargetContent:
 
 DETERMINISTIC ENGINE REPORT:
 ${JSON.stringify(engineResults, null, 2)}

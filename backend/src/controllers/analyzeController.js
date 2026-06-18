@@ -20,8 +20,8 @@ async function analyze(req, res, next) {
       explainOutput = pastedExplain;
     } else {
       explainOutput = await runExplain(query);
-      parsedExplain = parseExplainOutput(explainOutput);
     }
+    parsedExplain = parseExplainOutput(explainOutput);
 
     // Deterministic Analysis First
     const engineResults = runDeterministicAnalysis({ query, parsedExplain, indexes });
